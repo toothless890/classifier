@@ -14,6 +14,8 @@ import datetime
 import matplotlib.pyplot as plt
 from PIL import Image
 import io
+
+
 # START TENSORBOARD:
 #type in console (in classifier directory)> tensorboard --logdir=logs/fit
 
