@@ -5,3 +5,5 @@ __pycache__/*
 /logs/*
 datasetsas.npz
 checkpoint.weights.h5
+*.weights.h5
+*.npz
