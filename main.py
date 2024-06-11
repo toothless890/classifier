@@ -37,7 +37,7 @@ checkpoint_filepath = variables.checkpoint_filepath
 
 DIRECTORY = variables.DIRECTORY
 SEED = variables.SEED
-SPLIT= variables.SPLIT
+SPLIT= variables.VALIDATION_SPLIT
 
 # save the model if its a better model 
 model_checkpoint_callback = keras.callbacks.ModelCheckpoint(

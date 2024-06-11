@@ -74,7 +74,7 @@ SEED = 23265
 # Usually datasets are split into training data and validating data
 # SPLIT = the percentage (0.0-1.0) of data to be saved for validation
 global VALIDATION_SPLIT 
-SPLIT = 0.2
+VALIDATION_SPLIT = 0.2
 
 # validation data is not used to train the model, 
 # but used to check that it can apply it's knowledge to images it hasnt trained on
