@@ -1,0 +1,1 @@
+the output on the files from input will be put here, sorted according to the subfolders in /training/ 
