@@ -3,7 +3,7 @@ __pycache__/*
 /input/*
 /output/*
 /logs/*
-datasetsas.npz
-checkpoint.weights.h5
+*.npz
 *.weights.h5
 *.npz
+*.keras

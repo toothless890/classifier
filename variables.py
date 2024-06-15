@@ -45,7 +45,8 @@ global CLASSNAMES
 # automatically processes all names in the training folder
 CLASSNAMES = sorted(os.listdir(DIRECTORY+"training"))
 
-# CLASSNAMES = ["1","2","3","4","5","6","7","8","9","0"]
+#overrride
+# CLASSNAMES = ["0", "1","2","3","4","5","6","7","8","9"]
 
 #How many epochs to run for?
 # set to high number to run until stopped
@@ -58,13 +59,14 @@ EPOCHS = 1000000
 # smaller values will run faster, but may be more limited in accuracy. 
 # this also affects the size of the images in the test strip in tensorboard
 global IMAGE_SIZE
-IMAGE_SIZE = (128, 128)
+IMAGE_SIZE = (64, 64)
 
 # determines the 'shape' of the array formed for each image
 # 3 means 3 color values (RGB)
 # change to 1 for grayscale (you also must change 'RGB' to 'L' in prepData.py)
 global INPUTSHAPE
 INPUTSHAPE = (IMAGE_SIZE[1], IMAGE_SIZE[1], 3)
+RESHAPE = (-1, IMAGE_SIZE[1], IMAGE_SIZE[1], 3)
 
 
 global SEED # seed for randomizing dataset order
@@ -85,7 +87,7 @@ epochcounter = -1
 # -1 so that it generates a test strip before it starts training, otherwise it will wait [default is 16] epochs
 
 global checkpoint_filepath #where to put the weights of the model. Rename file to avoid overwriting if you want to preserve old models 
-checkpoint_filepath = DIRECTORY + 'checkpoint.weights.h5'
+checkpoint_filepath = DIRECTORY + 'model_checkpoint.keras'
 # checkpoint_filepath = 'C:/Users/ashto/Documents/code/Python/classifier/sassunatest/checkpoint.weights.h5'
 
 
