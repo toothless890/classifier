@@ -8,9 +8,7 @@ Python requirements:
     matplotlib
     pillow
     datetime
-    itertools
-    shutil
-    sklearn
+    scikit-learn
 You may also have to install tensorboard seperately on linux.
 
 Windows tensorflow no longer supports using the gpu, so to speed things up, you may have to downgrade tensorflow and keras (this is problematic for many reasons) or use linux (WSL is perfectly fine) 
