@@ -119,7 +119,7 @@ model.compile(
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
 try:
-    model.load_weights(checkpoint_filepath).expect_partial()
+    model.load_weights(checkpoint_filepath)
     print("model loaded")
 except Exception as e:
     print(e)
