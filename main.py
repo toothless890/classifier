@@ -1,7 +1,12 @@
 import os
-os.environ["KERAS_BACKEND"] = "tensorflow"  # Or "jax" or "torch"!
-
+import sys
+# os.environ["KERAS_BACKEND"] = "tensorflow"  # Or "jax" or "torch"!
+# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+# os.environ['XLA_FLAGS'] = '--xla_hlo_profile'  # Reduces verbosity of XLA
+# os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # or any {‘0’, ‘1’, ‘2’}
 import tensorflow as tf
+import absl.logging
 import keras_cv
 import tensorflow_datasets as tfds
 import keras
@@ -15,7 +20,10 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import io
 from sklearn.model_selection import train_test_split
-
+# tf.config.optimizer.set_jit(False)
+# tf.get_logger().setLevel('ERROR')
+# absl.logging.set_verbosity(absl.logging.ERROR)
+# absl.logging.info("starting logs")
 # START TENSORBOARD:
 #type in console (in classifier directory)> tensorboard --logdir=logs/fit
 
@@ -25,8 +33,9 @@ CLASSNAMES = variables.CLASSNAMES
 NUM_CLASSES = len(CLASSNAMES)
 
 IMAGE_SIZE=variables.IMAGE_SIZE
+
 #usually scaled in powers of 2, reduce this number if running out of vram. increase for faster epochs
-BATCH_SIZE = 32
+BATCH_SIZE = 8
 
 input_shape = variables.INPUTSHAPE  
 
@@ -42,18 +51,11 @@ VALIDATION_SPLIT= variables.VALIDATION_SPLIT
 # save the model if its a better model 
 model_checkpoint_callback = keras.callbacks.ModelCheckpoint(
     filepath=checkpoint_filepath,
-    # save_weights_only=True,
-    monitor='val_accuracy',
-    mode='max',
-    save_best_only=True)
-
-# currently unused. custom optimizer
-# lr_schedule = keras.optimizers.schedules.ExponentialDecay(
-#     initial_learning_rate=0.001,
-#     decay_steps=10000,
-#     decay_rate=0.99)
-
-# optimizer = keras.optimizers.SGD(learning_rate=lr_schedule, momentum=0.99) 
+    save_weights_only=True,
+    # monitor='val_loss',
+    # mode='auto',
+    # save_best_only=True
+    )
 
 # load the data processed by prepData
 """prepData.py MUST BE RUN BEFORE THE MAIN SCRIPT"""
@@ -65,98 +67,89 @@ except:
 
 x_data = data['x_data']
 y_data = data['y_data']
-bias = data['bias']
 
 
-x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=VALIDATION_SPLIT, random_state=SEED, stratify=y_data)
-
+x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=VALIDATION_SPLIT, random_state=SEED)
+x_data = None
+y_data = None
 # (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data("mnist.npz")
 
 x_train = x_train.astype("float32") / 255
 x_test = x_test.astype("float32") / 255
+y_train = y_train.astype("float32") / 255
+y_test = y_test.astype("float32") / 255
+
 x_train = np.expand_dims(x_train, -1)
 x_test = np.expand_dims(x_test, -1)
+y_train = np.expand_dims(y_train, -1)
+y_test = np.expand_dims(y_test, -1)
+
+x_train = np.squeeze(x_train)
+x_test = np.squeeze(x_test)
+y_train = np.squeeze(y_train)
+y_test = np.squeeze(y_test)
+
 
 print("x_train shape:", x_train.shape)
-print(x_train.shape[0], "train samples")
-print(x_test.shape[0], "test samples")
+# print(x_train.shape[0], "train samples")
+# print(x_test.shape[0], "test samples")
 
-y_train = keras.utils.to_categorical(y_train, NUM_CLASSES)
-y_test = keras.utils.to_categorical(y_test, NUM_CLASSES)
+# y_train = keras.utils.to_categorical(y_train, NUM_CLASSES)
+# y_test = keras.utils.to_categorical(y_test, NUM_CLASSES)
 
 #augment the data in order to simulate more training data and reduce overfitting. 
-data_augmentation = keras.Sequential(
-    [
-        layers.RandomFlip("horizontal_and_vertical"),
-        layers.RandomRotation(0.5),
-        layers.RandomBrightness(0.002),
-        layers.RandomContrast(0.002),
-        layers.RandomZoom(0.002),
-        # layers.RandomTranslation(0.2, 0.2)
-    ]
-)
+import model as modelBuilder
 
-#try to load a model if avaliable to resume training
+gen_G = modelBuilder.get_resnet_generator(name="generator_G")
+gen_F = modelBuilder.get_resnet_generator(name="generator_F")
 
-try:
-    model = keras.saving.load_model(checkpoint_filepath)
-    print("model loaded")
-
-except:
-    print("loading failed")
-
-#create the network. modify at risk of your sanity
-    model = keras.Sequential(
-        [
-            keras.Input(shape=input_shape),
-            data_augmentation,
-            layers.Conv2D(32, kernel_size=(3, 3), activation=keras.activations.leaky_relu, kernel_regularizer=regularizers.l2(1e-2)),
-            layers.MaxPooling2D(pool_size=(2, 2)),
-            layers.Conv2D(64, kernel_size=(3, 3), activation=keras.activations.leaky_relu, kernel_regularizer=regularizers.l2(1e-2)),
-            layers.MaxPooling2D(pool_size=(2, 2)),
-            # layers.Conv2D(128, kernel_size=(3, 3), activation=keras.activations.leaky_relu, kernel_regularizer=regularizers.l2(1e-2)),
-            # layers.MaxPooling2D(pool_size=(2, 2)),
-            
-            
-            # layers.Conv2D(256, kernel_size=(3, 3), activation=keras.activations.leaky_relu, kernel_regularizer=regularizers.l2(1e-2)),
-            # layers.MaxPooling2D(pool_size=(2, 2)),
-            # layers.Dropout(0.5),
-            
-            # layers.Dense(32, activation=keras.activations.leaky_relu, kernel_regularizer=regularizers.l2(1e-2)),
-            layers.Flatten(),
-            layers.Dropout(0.5),
-            layers.Dense(NUM_CLASSES, activation="softmax") ,
-        ]
+# Get the discriminators
+disc_X = modelBuilder.get_discriminator(name="discriminator_X")
+disc_Y = modelBuilder.get_discriminator(name="discriminator_Y")
+model = modelBuilder.CycleGan(
+    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y
     )
 
-    # compile the model  for training
-    model.compile(loss="categorical_crossentropy", optimizer= "adamw", metrics=["accuracy"])
-
-
-
+model.compile(
+    gen_G_optimizer=keras.optimizers.Adam(learning_rate=2e-4, beta_1=0.5),
+    gen_F_optimizer=keras.optimizers.Adam(learning_rate=2e-4, beta_1=0.5),
+    disc_X_optimizer=keras.optimizers.Adam(learning_rate=2e-4, beta_1=0.5),
+    disc_Y_optimizer=keras.optimizers.Adam(learning_rate=2e-4, beta_1=0.5),
+    gen_loss_fn=modelBuilder.generator_loss_fn,
+    disc_loss_fn=modelBuilder.discriminator_loss_fn,
+)
+try:
+    model.load_weights(checkpoint_filepath).expect_partial()
+    print("model loaded")
+except:
+    print("model failed to load, training from scratch")
 # create a test strip displayed in tensorboard
 def show_test_dataset(a, b):
+    # gen_G = modelBuilder.get_resnet_generator(name="generator_G")
     variables.epochcounter+=1   
     if (variables.epochcounter%16!=0):
         return
     
-    figure = plt.figure(figsize=(10,15))
-    result = model.predict(x_test)
-    for i in range(30):
-        name = "undecided"
-        for x in CLASSNAMES:
-            if (result[i][CLASSNAMES.index(x)]==(max(result[i]))):
-                name = x
-                break
-        plt.subplot(5, 6, i+1, title = str(name)+ ": \n"+ str(max(result[i])))
+    figure = plt.figure(figsize=(10,10))
+    # result = model.predict(x_test)
+    for i in range(9):
+        # name = "undecided"
+        
+        plt.subplot(3, 3, i+1)
         plt.xticks([]) 
         plt.yticks([])
         plt.grid(False)
         
-        
-        img = (np.squeeze(x_test[i]))
+        if (i%3 == 0):
+            img = (np.squeeze(x_test[i//3]))
+        elif(i%3 == 1):
+            img = np.squeeze(y_test[(i-1)//3])
+        else:
+            result = model.gen_G(x_test)
+            img = (np.squeeze(result[(i-2)//3]))
+            img = (img * 127.5 + 127.5).astype(np.uint8)
         plt.imshow(img)
-    figure.subplots_adjust(hspace=0.2)
+    # figure.subplots_adjust(hspace=0.2)
     fullImage = variables.plot_to_image(figure)
     with file_writer.as_default():
         tf.summary.image("latest classifications", fullImage, step=variables.epochcounter)
@@ -168,14 +161,9 @@ file_writer = tf.summary.create_file_writer(log_dir)
 # show_test_dataset(1,3)
 tensorboard_callback = keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
 drawImages = keras.callbacks.LambdaCallback(on_epoch_end= show_test_dataset)
-class_weight = {}
-try:
-    
-    for x in range(len(bias)):
-        class_weight[CLASSNAMES[x]] = bias[x]
-except:
-    pass
 
+print("training model")
 # Train your model
-model.fit(x_train, y_train, batch_size=BATCH_SIZE, epochs=EPOCHS, class_weight=class_weight, validation_data = (x_test, y_test), callbacks=[drawImages, model_checkpoint_callback, tensorboard_callback])
-
+model.fit(x_train, y_train, batch_size=BATCH_SIZE, epochs=10000, callbacks=[ model_checkpoint_callback, tensorboard_callback, drawImages]) #drawImages,
+# model.fit(tf.data.Dataset.zip((train_horses, train_zebras)),epochs=1,callbacks=[plotter, model_checkpoint_callback],)\
+print("completed training")
