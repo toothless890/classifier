@@ -27,6 +27,9 @@ from sklearn.model_selection import train_test_split
 # START TENSORBOARD:
 #type in console (in classifier directory)> tensorboard --logdir=logs/fit
 
+
+keras.mixed_precision.set_global_policy('mixed_float16')
+
 tf.experimental.numpy.experimental_enable_numpy_behavior()
 
 CLASSNAMES = variables.CLASSNAMES
@@ -74,10 +77,10 @@ x_data = None
 y_data = None
 # (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data("mnist.npz")
 
-x_train = x_train.astype("float32") / 255
-x_test = x_test.astype("float32") / 255
-y_train = y_train.astype("float32") / 255
-y_test = y_test.astype("float32") / 255
+x_train = (x_train.astype("float32") / 127.5) - 1
+x_test = (x_test.astype("float32") / 127.5) - 1
+y_train = (y_train.astype("float32") / 127.5) - 1
+y_test = (y_test.astype("float32") / 127.5) - 1
 
 x_train = np.expand_dims(x_train, -1)
 x_test = np.expand_dims(x_test, -1)
