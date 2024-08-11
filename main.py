@@ -147,8 +147,10 @@ def show_test_dataset(a, b):
         
         if (i%3 == 0):
             img = (np.squeeze(x_test[i//3]))
+            img = (img * 127.5 + 127.5).astype(np.uint8)
         elif(i%3 == 1):
             img = np.squeeze(y_test[(i-1)//3])
+            img = (img * 127.5 + 127.5).astype(np.uint8)
         else:
             
             img = (np.squeeze(result[(i-2)//3]))
