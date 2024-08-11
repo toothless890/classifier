@@ -7,3 +7,5 @@ __pycache__/*
 *.weights.h5
 *.npz
 *.keras
+/preprocess/*
+*.tar.gz
