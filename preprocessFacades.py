@@ -41,6 +41,7 @@ def process_images():
         img_files = [os.path.join(input_folder, folder, img_file) for img_file in os.listdir(os.path.join(input_folder, folder))]
         with multiprocessing.Pool() as pool:
             results = pool.starmap(process_image, [(img_file, output_folder_fake, output_folder_real, count + i) for i, img_file in enumerate(img_files)])
-            count = max(results)  # Update the count after processing all images
+            count = max(results)  # Update the count after processing all images 
+            
 
 process_images()

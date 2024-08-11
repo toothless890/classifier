@@ -35,7 +35,7 @@ NUM_CLASSES = len(CLASSNAMES)
 IMAGE_SIZE=variables.IMAGE_SIZE
 
 #usually scaled in powers of 2, reduce this number if running out of vram. increase for faster epochs
-BATCH_SIZE = 8
+BATCH_SIZE = 4
 
 input_shape = variables.INPUTSHAPE  
 
@@ -121,7 +121,8 @@ model.compile(
 try:
     model.load_weights(checkpoint_filepath).expect_partial()
     print("model loaded")
-except:
+except Exception as e:
+    print(e)
     print("model failed to load, training from scratch")
 # create a test strip displayed in tensorboard
 def show_test_dataset(a, b):
@@ -132,10 +133,11 @@ def show_test_dataset(a, b):
     
     figure = plt.figure(figsize=(10,10))
     # result = model.predict(x_test)
-    for i in range(9):
+    result = model.gen_G(x_test)
+    for i in range(36):
         # name = "undecided"
         
-        plt.subplot(3, 3, i+1)
+        plt.subplot(6, 6, i+1)
         plt.xticks([]) 
         plt.yticks([])
         plt.grid(False)
@@ -145,7 +147,7 @@ def show_test_dataset(a, b):
         elif(i%3 == 1):
             img = np.squeeze(y_test[(i-1)//3])
         else:
-            result = model.gen_G(x_test)
+            
             img = (np.squeeze(result[(i-2)//3]))
             img = (img * 127.5 + 127.5).astype(np.uint8)
         plt.imshow(img)
