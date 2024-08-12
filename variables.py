@@ -34,7 +34,7 @@ EPOCHS = 100
 # smaller values will run faster, but may be more limited in accuracy. 
 # this also affects the size of the images in the test strip in tensorboard
 global IMAGE_SIZE
-IMAGE_SIZE = (256, 256)
+IMAGE_SIZE = (128, 128)
 
 # determines the 'shape' of the array formed for each image
 # 3 means 3 color values (RGB)
