@@ -105,6 +105,17 @@ def load_and_preprocess_data():
     dataset = dataset.prefetch(tf.data.AUTOTUNE)
     return dataset, x_test, y_test
 
+def warmup_gpu():
+    x = tf.random.normal([1, 64, 64, 3])
+    y = tf.random.normal([1, 64, 64, 3])
+    model = tf.keras.Sequential([
+        tf.keras.layers.Conv2D(32, (3, 3), activation='relu', padding='same'),
+        tf.keras.layers.MaxPooling2D((2, 2))
+    ])
+    model(x)
+    return
+
+
 # def normalize_img(img):
 #     img = tf.cast(img, dtype=tf.float32)
 #     # Map values in the range [-1, 1]
@@ -139,7 +150,7 @@ disc_Y = modelBuilder.get_discriminator(name="discriminator_Y")
 model = modelBuilder.CycleGan(
     generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y
     )
-scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=1e-3,decay_steps=1000,decay_rate=0.9)
+scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=0.0002,decay_steps=100,decay_rate=0.3)
 try:
     model.load_weights(checkpoint_filepath)
     print("model loaded")
@@ -147,10 +158,10 @@ except Exception as e:
     print(e)
     print("model failed to load, training from scratch")
 model.compile(
-    gen_G_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
-    gen_F_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
-    disc_X_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
-    disc_Y_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
+    gen_G_optimizer=keras.optimizers.Adam(learning_rate=scheduler),
+    gen_F_optimizer=keras.optimizers.Adam(learning_rate=scheduler),
+    disc_X_optimizer=keras.optimizers.Adam(learning_rate=scheduler),
+    disc_Y_optimizer=keras.optimizers.Adam(learning_rate=scheduler),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
@@ -159,8 +170,8 @@ def show_test_dataset(a, b):
     # Increment the epoch counter
     variables.epochcounter += 1
 
-    # Perform actions only every 16 epochs
-    if variables.epochcounter % 16 != 0:
+    # Perform actions only every few epochs
+    if variables.epochcounter % 4 != 0: 
         return
     
     # Generate images
@@ -189,7 +200,6 @@ def show_test_dataset(a, b):
         
         img = (img * 127.5 + 127.5).astype(np.uint8)
         plt.imshow(img)
-        plt.savefig("latestModel.png")
     # Save the figure to an image and write to TensorBoard
     full_image = variables.plot_to_image(figure)
     with file_writer.as_default():
@@ -205,8 +215,11 @@ file_writer = tf.summary.create_file_writer(log_dir)
 tensorboard_callback = keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
 drawImages = keras.callbacks.LambdaCallback(on_epoch_end= show_test_dataset)
 
+print("warming up ")
+warmup_gpu()
+
 print("training model")
 # Train your model
-model.fit(dataset, batch_size=BATCH_SIZE, epochs=EPOCHS, callbacks=[ model_checkpoint_callback, tensorboard_callback, drawImages]) #drawImages,
+model.fit(dataset, batch_size=BATCH_SIZE, epochs=EPOCHS, callbacks=[model_checkpoint_callback, tensorboard_callback, drawImages]) #drawImages,
 # model.fit(tf.data.Dataset.zip((train_horses, train_zebras)),epochs=1,callbacks=[plotter, model_checkpoint_callback],)\
 print("completed training")
