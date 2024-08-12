@@ -34,7 +34,7 @@ EPOCHS = 100
 # smaller values will run faster, but may be more limited in accuracy. 
 # this also affects the size of the images in the test strip in tensorboard
 global IMAGE_SIZE
-IMAGE_SIZE = (64, 64)
+IMAGE_SIZE = (256, 256)
 
 # determines the 'shape' of the array formed for each image
 # 3 means 3 color values (RGB)
@@ -51,7 +51,7 @@ SEED = 23265
 # Usually datasets are split into training data and validating data
 # SPLIT = the percentage (0.0-1.0) of data to be saved for validation
 global VALIDATION_SPLIT 
-VALIDATION_SPLIT = 0.1
+VALIDATION_SPLIT = 0.02
 
 # validation data is not used to train the model, 
 # but used to check that it can apply it's knowledge to images it hasnt trained on
@@ -85,3 +85,5 @@ def plot_to_image(figure):
     # Add the batch dimension
     image = tf.expand_dims(image, 0)
     return image
+if __name__ == "__main__":
+    print("this is the variables file and does not need to be run. \n please make sure to run the main, preprocess, or prep files instead!")
