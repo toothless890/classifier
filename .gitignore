@@ -11,3 +11,4 @@ __pycache__/*
 *.tar.gz
 .vscode/settings.json
 horse2zebra.zip
+*.png
