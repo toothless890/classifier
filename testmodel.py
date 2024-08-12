@@ -2,19 +2,13 @@
 import os
 os.environ["KERAS_BACKEND"] = "tensorflow"  # Or "jax" or "torch"!
 
-from keras import layers
 import tensorflow as tf
-import keras_cv
-import tensorflow_datasets as tfds
 import keras
 import numpy as np
-from PIL import Image
 import matplotlib.pyplot as plt
 import variables
 import os
-import shutil
-import prepData
-from keras import regularizers
+
 from keras import backend as K
 K.clear_session()
 
@@ -86,8 +80,15 @@ try:
 except Exception as e:
     print("model failed to load, exiting")
     exit()
-K.clear_session()
-result = model.gen_G(x_test)
+import gc
+model = model.gen_G
+
+del gen_F
+del disc_X
+del disc_Y
+del data
+gc.collect()
+result = model(x_test)
     
 # Plot and save images
 num_images = 36
