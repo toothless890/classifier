@@ -75,10 +75,10 @@ if __name__ == "__main__":
     data_dir = DIRECTORY+'training'
     x_data, y_data = load_data(data_dir)
     
-    
-
+    x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=VALIDATION_SPLIT, random_state=SEED)
+    print(len(y_test))
     # Split the data into training and testing sets
-    # x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=VALIDATION_SPLIT, random_state=SEED, stratify=y_data)
+    # 
 
     # Normalize the data (its more efficient)
     # x_train = x_train / 255.0
@@ -87,12 +87,17 @@ if __name__ == "__main__":
     # Ensure the data shape is correct for Keras
     # x_train = x_train.reshape(RESHAPE)
     # x_test = x_test.reshape(RESHAPE)
-    x_data = x_data.reshape(RESHAPE)
-    y_data = y_data.reshape(RESHAPE)
+    
+    x_train = x_train.reshape(RESHAPE)
+    y_train = y_train.reshape(RESHAPE)
+    x_test = x_test.reshape(RESHAPE)
+    y_test = y_test.reshape(RESHAPE)
+    
     # print('x_train shape:', x_train.shape)
     # print('y_train shape:', y_train.shape)
     # print('x_test shape:', x_test.shape)
     # print('y_test shape:', y_test.shape)
+   
 
-    np.savez_compressed(DIRECTORY+'/dataset.npz', x_data = x_data, y_data = y_data)#x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test)
+    np.savez_compressed(DIRECTORY+'/dataset.npz', x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test)
     print('complete')
