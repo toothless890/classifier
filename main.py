@@ -164,7 +164,7 @@ def show_test_dataset(a, b):
         return
     
     # Generate images
-    result = model.gen_G(x_test)
+    # result = model.gen_G(x_test)
     
     # Plot and save images
     
