@@ -86,28 +86,29 @@ model = model.gen_G
 del gen_F
 del disc_X
 del disc_Y
-del data
+# del data
 gc.collect()
-result = model(x_test)
+
     
 # Plot and save images
-num_images = 36
-num_rows = 6
-num_cols = 6
 
+rows = 4
+cols = 4
+num_images = rows*cols
+result = model(x_test[0:(num_images//2)])
 figure = plt.figure(figsize=(10, 10))
 for i in range(num_images):
-    plt.subplot(num_rows, num_cols, i + 1)
+    plt.subplot(rows, cols, i + 1)
     plt.xticks([])
     plt.yticks([])
     plt.grid(False)
 
-    if i % 3 == 0:
-        img = np.squeeze(x_test[i // 3])
-    elif i % 3 == 1:
-        img = np.squeeze(y_test[(i - 1) // 3])
+    if i % 2 == 0:
+        img = np.squeeze(x_test[i // 2])
+    # elif i % 3 == 1:
+    #     img = np.squeeze(y_test[(i - 1) // 3])
     else:
-        img = np.squeeze(result[(i - 2) // 3])
+        img = np.squeeze(result[(i - 1) // 2])
     
     img = (img * 127.5 + 127.5).astype(np.uint8)
     plt.imshow(img)

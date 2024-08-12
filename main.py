@@ -140,6 +140,12 @@ model = modelBuilder.CycleGan(
     generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y
     )
 scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=1e-3,decay_steps=1000,decay_rate=0.9)
+try:
+    model.load_weights(checkpoint_filepath)
+    print("model loaded")
+except Exception as e:
+    print(e)
+    print("model failed to load, training from scratch")
 model.compile(
     gen_G_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
     gen_F_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
@@ -148,12 +154,6 @@ model.compile(
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
-try:
-    model.load_weights(checkpoint_filepath)
-    print("model loaded")
-except Exception as e:
-    print(e)
-    print("model failed to load, training from scratch")
 # create a test strip displayed in tensorboard
 def show_test_dataset(a, b):
     # Increment the epoch counter
@@ -167,27 +167,28 @@ def show_test_dataset(a, b):
     result = model.gen_G(x_test)
     
     # Plot and save images
-    num_images = 36
-    num_rows = 6
-    num_cols = 6
     
+    rows = 4
+    cols = 4
+    num_images = rows*cols
+    result = model(x_test[0:(num_images//2)])
     figure = plt.figure(figsize=(10, 10))
     for i in range(num_images):
-        plt.subplot(num_rows, num_cols, i + 1)
+        plt.subplot(rows, cols, i + 1)
         plt.xticks([])
         plt.yticks([])
         plt.grid(False)
 
-        if i % 3 == 0:
-            img = np.squeeze(x_test[i // 3])
-        elif i % 3 == 1:
-            img = np.squeeze(y_test[(i - 1) // 3])
+        if i % 2 == 0:
+            img = np.squeeze(x_test[i // 2])
+        # elif i % 3 == 1:
+        #     img = np.squeeze(y_test[(i - 1) // 3])
         else:
-            img = np.squeeze(result[(i - 2) // 3])
+            img = np.squeeze(result[(i - 1) // 2])
         
         img = (img * 127.5 + 127.5).astype(np.uint8)
         plt.imshow(img)
-
+        plt.savefig("latestModel.png")
     # Save the figure to an image and write to TensorBoard
     full_image = variables.plot_to_image(figure)
     with file_writer.as_default():
