@@ -147,21 +147,25 @@ gen_F = modelBuilder.get_resnet_generator(name="generator_F")
 # Get the discriminators
 disc_X = modelBuilder.get_discriminator(name="discriminator_X")
 disc_Y = modelBuilder.get_discriminator(name="discriminator_Y")
+
 model = modelBuilder.CycleGan(
     generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y
     )
-scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=0.0002,decay_steps=100,decay_rate=0.3)
+scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=0.0001,decay_steps=100,decay_rate=0.3)
+
 try:
     model.load_weights(checkpoint_filepath)
     print("model loaded")
 except Exception as e:
     print(e)
     print("model failed to load, training from scratch")
+    
+    
 model.compile(
-    gen_G_optimizer=keras.optimizers.Adam(learning_rate=scheduler),
-    gen_F_optimizer=keras.optimizers.Adam(learning_rate=scheduler),
-    disc_X_optimizer=keras.optimizers.Adam(learning_rate=scheduler),
-    disc_Y_optimizer=keras.optimizers.Adam(learning_rate=scheduler),
+    gen_G_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
+    gen_F_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
+    disc_X_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
+    disc_Y_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
@@ -171,7 +175,7 @@ def show_test_dataset(a, b):
     variables.epochcounter += 1
 
     # Perform actions only every few epochs
-    if variables.epochcounter % 4 != 0: 
+    if variables.epochcounter % 2 != 0: 
         return
     
     # Generate images
@@ -221,5 +225,4 @@ warmup_gpu()
 print("training model")
 # Train your model
 model.fit(dataset, batch_size=BATCH_SIZE, epochs=EPOCHS, callbacks=[model_checkpoint_callback, tensorboard_callback, drawImages]) #drawImages,
-# model.fit(tf.data.Dataset.zip((train_horses, train_zebras)),epochs=1,callbacks=[plotter, model_checkpoint_callback],)\
 print("completed training")
