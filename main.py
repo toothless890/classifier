@@ -62,45 +62,48 @@ model_checkpoint_callback = keras.callbacks.ModelCheckpoint(
 
 # load the data processed by prepData
 """prepData.py MUST BE RUN BEFORE THE MAIN SCRIPT"""
-try:
-    data = np.load(DIRECTORY+'/dataset.npz')
-except:
-    print("You must run prepData.py in order to train the model")
-    exit
 
-x_data = data['x_data']
-y_data = data['y_data']
-
-
-x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=VALIDATION_SPLIT, random_state=SEED)
-x_data = None
-y_data = None
 # (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data("mnist.npz")
 
-x_train = (x_train.astype("float32") / 127.5) - 1
-x_test = (x_test.astype("float32") / 127.5) - 1
-y_train = (y_train.astype("float32") / 127.5) - 1
-y_test = (y_test.astype("float32") / 127.5) - 1
+def load_and_preprocess_data( batch_size):
+    # Load the .npz file
+    try:
+        data = np.load(DIRECTORY+'/dataset.npz')
+    except:
+        print("You must run prepData.py in order to train the model")
+        exit
 
-x_train = np.expand_dims(x_train, -1)
-x_test = np.expand_dims(x_test, -1)
-y_train = np.expand_dims(y_train, -1)
-y_test = np.expand_dims(y_test, -1)
+    x_data = data['x_data']
+    y_data = data['y_data']
+    x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=VALIDATION_SPLIT, random_state=SEED)
+    x_data = None
+    y_data = None 
+    x_train = (x_train.astype("float32") / 127.5) - 1
+    x_test = (x_test.astype("float32") / 127.5) - 1
+    y_train = (y_train.astype("float32") / 127.5) - 1
+    y_test = (y_test.astype("float32") / 127.5) - 1
 
-x_train = np.squeeze(x_train)
-x_test = np.squeeze(x_test)
-y_train = np.squeeze(y_train)
-y_test = np.squeeze(y_test)
+    x_train = np.expand_dims(x_train, -1)
+    x_test = np.expand_dims(x_test, -1)
+    y_train = np.expand_dims(y_train, -1)
+    y_test = np.expand_dims(y_test, -1)
+
+    x_train = np.squeeze(x_train)
+    x_test = np.squeeze(x_test)
+    y_train = np.squeeze(y_train)
+    y_test = np.squeeze(y_test)
+
+    
+    dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
+    print("x_train shape:", x_train.shape)
+    # Shuffle and batch the data
+    dataset = dataset.shuffle(buffer_size=10000).batch(batch_size)
+    
+    return dataset, x_test, y_test
+
+dataset, x_test, y_test = load_and_preprocess_data(BATCH_SIZE)
 
 
-print("x_train shape:", x_train.shape)
-# print(x_train.shape[0], "train samples")
-# print(x_test.shape[0], "test samples")
-
-# y_train = keras.utils.to_categorical(y_train, NUM_CLASSES)
-# y_test = keras.utils.to_categorical(y_test, NUM_CLASSES)
-
-#augment the data in order to simulate more training data and reduce overfitting. 
 import model as modelBuilder
 
 gen_G = modelBuilder.get_resnet_generator(name="generator_G")
@@ -171,6 +174,6 @@ drawImages = keras.callbacks.LambdaCallback(on_epoch_end= show_test_dataset)
 
 print("training model")
 # Train your model
-model.fit(x_train, y_train, batch_size=BATCH_SIZE, epochs=10000, callbacks=[ model_checkpoint_callback, tensorboard_callback, drawImages]) #drawImages,
+model.fit(dataset, batch_size=BATCH_SIZE, epochs=10000, callbacks=[ model_checkpoint_callback, tensorboard_callback, drawImages]) #drawImages,
 # model.fit(tf.data.Dataset.zip((train_horses, train_zebras)),epochs=1,callbacks=[plotter, model_checkpoint_callback],)\
 print("completed training")
