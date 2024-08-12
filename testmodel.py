@@ -64,12 +64,12 @@ disc_Y = modelBuilder.get_discriminator(name="discriminator_Y")
 model = modelBuilder.CycleGan(
     generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y
     )
-scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=1e-3,decay_steps=500,decay_rate=0.9)
+scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=1e-3,decay_steps=1000,decay_rate=0.9)
 model.compile(
-    gen_G_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.9),
-    gen_F_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.9),
-    disc_X_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.9),
-    disc_Y_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.9),
+    gen_G_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
+    gen_F_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
+    disc_X_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
+    disc_Y_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
