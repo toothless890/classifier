@@ -7,31 +7,6 @@ import os
 # This file is the main file for storing variables that need to be replicated across multiple scripts
 # Brief descriptions will be provided for each changable variable
 
-"""
-    MAKE SURE TO CHANGE DIRECTORY TO THE DIRECTORY OF THIS FILE
-    Description of folder structure
-    /classifier/
-        /training/  < PUT TRAINING DATA IN THIS FOLDER
-            /[category1] these categories can be named anything and have as many as you want
-            /[category2]  
-            /[category[n]]
-            
-        /input/     < PUT DATA THAT YOU WANT TO SORT HERE
-            /[folder1] these can also be named anything
-            /[folder2] the code that turns the training data into a dataset is the same as what turns the
-            /[folder[n]] data that is desired to be sorted so it must be in a subfolder (the names of the folder doesnt change much)
-            
-        /output/   > DATA GETS SORTED INTO CATEGORIES FROM /training/
-            /[category1]
-            /[category2]  
-            /[category[n]]
-            
-        /logs/
-            /fit/ this is for tensorboard, please start tensorboard by running the shell command 
-                                            "tensorboard --logdir=logs/fit" 
-                                            in the root classifier directory (through the shell, not through python)
-""" 
-
 
 global DIRECTORY # of the dataset
 
@@ -76,7 +51,7 @@ SEED = 23265
 # Usually datasets are split into training data and validating data
 # SPLIT = the percentage (0.0-1.0) of data to be saved for validation
 global VALIDATION_SPLIT 
-VALIDATION_SPLIT = 0.2
+VALIDATION_SPLIT = 0.1
 
 # validation data is not used to train the model, 
 # but used to check that it can apply it's knowledge to images it hasnt trained on
