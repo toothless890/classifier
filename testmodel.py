@@ -85,7 +85,7 @@ try:
 except Exception as e:
     print("model failed to load, exiting")
     exit()
-
+K.clear_session()
 result = model.gen_G(x_test)
     
 # Plot and save images
