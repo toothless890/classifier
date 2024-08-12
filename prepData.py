@@ -38,8 +38,8 @@ def load_data(data_dir):
         print(class_dir, ": ", str(len(os.listdir(inpath))))
         count = 0
     for img_file in os.listdir(inpath):
-        if count >= 1000:
-            break
+        # if count >= 1000:
+        #     break
         count +=1
         img_path = os.path.join(inpath, img_file)
         try:
@@ -52,6 +52,9 @@ def load_data(data_dir):
         except Exception as e:
             print(f"Failed to process image {img_path}: {e}")
             
+    for img_file in os.listdir(outpath):    
+        # if count >= 1000:
+        #     break    
         img_path = os.path.join(outpath, img_file)
         try:
             img = Image.open(img_path).convert('RGB')   # CHANGE 'RGB' TO 'L' FOR GRAYSCALE, 
