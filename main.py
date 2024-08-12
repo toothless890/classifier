@@ -171,6 +171,7 @@ def show_test_dataset(a, b):
     rows = 4
     cols = 4
     num_images = rows*cols
+    #TODO: make this use batches, of a changable size (i tried isolating one image and it didnt work, investigate more!) 
     result = model(x_test[0:(num_images//2)])
     figure = plt.figure(figsize=(10, 10))
     for i in range(num_images):
@@ -206,6 +207,6 @@ drawImages = keras.callbacks.LambdaCallback(on_epoch_end= show_test_dataset)
 
 print("training model")
 # Train your model
-model.fit(dataset, batch_size=BATCH_SIZE, epochs=EPOCHS, callbacks=[ model_checkpoint_callback, tensorboard_callback])#, drawImages]) #drawImages,
+model.fit(dataset, batch_size=BATCH_SIZE, epochs=EPOCHS, callbacks=[ model_checkpoint_callback, tensorboard_callback, drawImages]) #drawImages,
 # model.fit(tf.data.Dataset.zip((train_horses, train_zebras)),epochs=1,callbacks=[plotter, model_checkpoint_callback],)\
 print("completed training")
