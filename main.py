@@ -172,7 +172,7 @@ def show_test_dataset(a, b):
     cols = 4
     num_images = rows*cols
     #TODO: make this use batches, of a changable size (i tried isolating one image and it didnt work, investigate more!) 
-    result = model(x_test[0:(num_images//2)])
+    result = model.gen_G(x_test[0:(num_images//2)])
     figure = plt.figure(figsize=(10, 10))
     for i in range(num_images):
         plt.subplot(rows, cols, i + 1)
