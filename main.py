@@ -151,7 +151,7 @@ disc_Y = modelBuilder.get_discriminator(name="discriminator_Y")
 model = modelBuilder.CycleGan(
     generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y
     )
-scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=0.0001,decay_steps=100,decay_rate=0.3)
+scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=0.001,decay_steps=100,decay_rate=0.9)
 
 try:
     model.load_weights(checkpoint_filepath)
