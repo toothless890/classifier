@@ -205,6 +205,6 @@ drawImages = keras.callbacks.LambdaCallback(on_epoch_end= show_test_dataset)
 
 print("training model")
 # Train your model
-model.fit(dataset, batch_size=BATCH_SIZE, epochs=100, callbacks=[ model_checkpoint_callback, tensorboard_callback])#, drawImages]) #drawImages,
+model.fit(dataset, batch_size=BATCH_SIZE, epochs=EPOCHS, callbacks=[ model_checkpoint_callback, tensorboard_callback])#, drawImages]) #drawImages,
 # model.fit(tf.data.Dataset.zip((train_horses, train_zebras)),epochs=1,callbacks=[plotter, model_checkpoint_callback],)\
 print("completed training")
