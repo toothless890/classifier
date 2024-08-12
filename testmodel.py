@@ -15,6 +15,12 @@ import os
 import shutil
 import prepData
 from keras import regularizers
+from keras import backend as K
+K.clear_session()
+
+gpus = tf.config.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
 
 
 CLASSNAMES = variables.CLASSNAMES
