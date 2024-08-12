@@ -10,6 +10,7 @@ import tensorflow_datasets as tfds
 autotune = tf.data.AUTOTUNE
 INPUTSHAPE=variables.INPUTSHAPE
 IMAGE_SIZE=variables.IMAGE_SIZE
+keras.mixed_precision.set_global_policy('mixed_float16')
 
 class ReflectionPadding2D(layers.Layer):
     """Implements Reflection Padding as a layer.
