@@ -9,3 +9,5 @@ __pycache__/*
 *.keras
 /preprocess/*
 *.tar.gz
+.vscode/settings.json
+horse2zebra.zip
