@@ -166,7 +166,7 @@ def upsample(
 def get_resnet_generator(
     filters=64,
     num_downsampling_blocks=2,#2
-    num_residual_blocks=7, #9
+    num_residual_blocks=9, #9
     num_upsample_blocks=2,#2
     gamma_initializer=gamma_init,
     name=None,
