@@ -103,7 +103,7 @@ def load_and_preprocess_data():
     dataset = dataset.shuffle(buffer_size=256)
     dataset = dataset.batch(BATCH_SIZE)
     dataset = dataset.prefetch(tf.data.AUTOTUNE)
-    return dataset, x_test, y_test
+    return dataset, x_test, y_tes1
 
 def warmup_gpu():
     x = tf.random.normal([1, 64, 64, 3])
@@ -151,7 +151,7 @@ disc_Y = modelBuilder.get_discriminator(name="discriminator_Y")
 model = modelBuilder.CycleGan(
     generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y
     )
-scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=0.002,decay_steps=3000,decay_rate=0.9)
+scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=0.002,decay_steps=1000,decay_rate=0.9)
 
 try:
     model.load_weights(checkpoint_filepath)

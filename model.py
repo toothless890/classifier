@@ -177,16 +177,16 @@ def get_resnet_generator(
     x = layers.Conv2D(filters, (7, 7), kernel_initializer=kernel_init, use_bias=False)(x)
     # x = tfa.layers.InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     x = InstanceNormalization(gamma_initializer=gamma_initializer)(x)
-    x = layers.Activation("relu")(x)
+    x = layers.Activation("LeakyRelu")(x)
 
     # Downsampling
     for _ in range(num_downsampling_blocks):
         filters *= 2
-        x = downsample(x, filters=filters, activation=layers.Activation("relu"))
+        x = downsample(x, filters=filters, activation=layers.Activation("LeakyRelu"))
 
     # Residual blocks
     for _ in range(num_residual_blocks):
-        x = residual_block(x, activation=layers.Activation("relu"))
+        x = residual_block(x, activation=layers.Activation("LeakyRelu"))
 
     # Upsampling
     for _ in range(num_upsample_blocks):
