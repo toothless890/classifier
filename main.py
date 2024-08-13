@@ -151,8 +151,22 @@ disc_Y = modelBuilder.get_discriminator(name="discriminator_Y")
 model = modelBuilder.CycleGan(
     generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y
     )
-scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=0.001,decay_steps=10,decay_rate=0.9)
+# scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=0.001,decay_steps=50,decay_rate=0.9)
+class CustomLearningRateSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
+    def __init__(self, initial_lr, first_phase_steps, second_phase_steps):
+        self.initial_lr = initial_lr
+        self.first_phase_steps = first_phase_steps
+        self.second_phase_steps = second_phase_steps
 
+    def __call__(self, step):
+        if step < self.first_phase_steps:
+            return self.initial_lr
+        elif step < self.first_phase_steps + self.second_phase_steps:
+            return self.initial_lr * (1 - (step - self.first_phase_steps) / self.second_phase_steps)
+        else:
+            return 0.0
+
+learning_rate_schedule = CustomLearningRateSchedule(0.0002, 100, 100)
 try:
     model.load_weights(checkpoint_filepath)
     print("model loaded")
@@ -162,10 +176,10 @@ except Exception as e:
     
     
 model.compile(
-    gen_G_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
-    gen_F_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
-    disc_X_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
-    disc_Y_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
+    gen_G_optimizer=keras.optimizers.Adam(learning_rate=learning_rate_schedule, beta_1=0.5),
+    gen_F_optimizer=keras.optimizers.Adam(learning_rate=learning_rate_schedule, beta_1=0.5),
+    disc_X_optimizer=keras.optimizers.Adam(learning_rate=learning_rate_schedule, beta_1=0.5),
+    disc_Y_optimizer=keras.optimizers.Adam(learning_rate=learning_rate_schedule, beta_1=0.5),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
