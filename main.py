@@ -103,7 +103,7 @@ def load_and_preprocess_data():
     dataset = dataset.shuffle(buffer_size=256)
     dataset = dataset.batch(BATCH_SIZE)
     dataset = dataset.prefetch(tf.data.AUTOTUNE)
-    return dataset, x_test, y_tes1
+    return dataset, x_test, y_test
 
 def warmup_gpu():
     x = tf.random.normal([1, 64, 64, 3])
