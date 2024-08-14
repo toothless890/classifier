@@ -114,6 +114,28 @@ def warmup_gpu():
     model(x)
     return
 
+
+# def normalize_img(img):
+#     img = tf.cast(img, dtype=tf.float32)
+#     # Map values in the range [-1, 1]
+#     return (img / 127.5) - 1.0
+
+# def augment_image(image):
+#     # Randomly flip the image horizontally
+#     image = tf.image.random_flip_left_right(image)
+   
+#     # Randomly adjust brightness
+#     image = tf.image.random_brightness(image, max_delta=0.1)
+#     # Randomly adjust contrast
+#     image = tf.image.random_contrast(image, lower=0.9, upper=1.1)
+#     # Randomly adjust saturation
+#     image = tf.image.random_saturation(image, lower=0.9, upper=1.1)
+#     # Randomly adjust hue
+#     image = tf.image.random_hue(image, max_delta=0.1)
+    
+#     image = tf.image.random_crip(image, size=[*INPUTSHAPE])
+#     return image
+
 dataset, x_test, y_test = load_and_preprocess_data()
 
 import model as modelBuilder
@@ -139,10 +161,10 @@ except Exception as e:
     
     
 model.compile(
-    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
-    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
-    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
-    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
+    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
+    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
+    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
+    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
@@ -152,8 +174,8 @@ def show_test_dataset(a, b):
     variables.epochcounter += 1
 
     # Perform actions only every few epochs
-    # if variables.epochcounter % 2 != 0: 
-    #     return
+    if variables.epochcounter % 2 != 0: 
+        return
     
     # Generate images
     # result = model.gen_G(x_test)
