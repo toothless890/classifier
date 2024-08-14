@@ -174,8 +174,8 @@ def show_test_dataset(a, b):
     variables.epochcounter += 1
 
     # Perform actions only every few epochs
-    if variables.epochcounter % 2 != 0: 
-        return
+    # if variables.epochcounter % 2 != 0: 
+    #     return
     
     # Generate images
     # result = model.gen_G(x_test)
