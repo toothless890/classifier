@@ -161,10 +161,10 @@ except Exception as e:
     
     
 model.compile(
-    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
-    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
-    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
-    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
+    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
+    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
+    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
+    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
