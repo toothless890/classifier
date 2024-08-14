@@ -16,7 +16,7 @@ gpus = tf.config.list_physical_devices('GPU')
 for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
 
-keras.mixed_precision.set_global_policy('mixed_float16')
+# keras.mixed_precision.set_global_policy('mixed_float16')
 
 CLASSNAMES = variables.CLASSNAMES
 
@@ -109,8 +109,7 @@ for i in range(num_images):
     # elif i % 3 == 1:
     #     img = np.squeeze(y_test[(i - 1) // 3])
     else:
-        image = x_test[(i - 1) // 2]
-        image.reshape(None, 255, 255, 3)
+        image = x_test[((i - 1) // 2):((i - 1) // 2)+1]
         result = model.gen_G(image)
         
         img = np.squeeze(result)
