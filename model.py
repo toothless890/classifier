@@ -12,7 +12,7 @@ INPUTSHAPE=variables.INPUTSHAPE
 IMAGE_SIZE=variables.IMAGE_SIZE
 
 
-keras.mixed_precision.set_global_policy('mixed_float16')
+# keras.mixed_precision.set_global_policy('mixed_float16')
 
 class ReflectionPadding2D(layers.Layer):
     """Implements Reflection Padding as a layer.
@@ -169,7 +169,7 @@ def upsample(
 def get_resnet_generator(
     filters=64,
     num_downsampling_blocks=2,#2
-    num_residual_blocks=9, #9
+    num_residual_blocks=8, #9
     num_upsample_blocks=2,#2
     gamma_initializer=gamma_init,
     name=None,
