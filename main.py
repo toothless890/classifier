@@ -202,7 +202,7 @@ def show_test_dataset(a, b):
             
             image = x_test[(i - 1) // 2]
             image.reshape(None, INPUTSHAPE[0], INPUTSHAPE[1], INPUTSHAPE[2])
-            result = model.gen_G()
+            result = model.gen_G(image)
             
             img = np.squeeze(result)
         
