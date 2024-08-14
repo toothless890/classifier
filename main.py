@@ -199,7 +199,11 @@ def show_test_dataset(a, b):
         # elif i % 3 == 1:
         #     img = np.squeeze(y_test[(i - 1) // 3])
         else:
-            result = model.gen_G(x_test[(i - 1) // 2])
+            
+            image = x_test[(i - 1) // 2]
+            image.reshape(None, INPUTSHAPE[0], INPUTSHAPE[1], INPUTSHAPE[2])
+            result = model.gen_G()
+            
             img = np.squeeze(result)
         
         img = (img * 127.5 + 127.5).astype(np.uint8)
