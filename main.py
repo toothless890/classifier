@@ -114,28 +114,6 @@ def warmup_gpu():
     model(x)
     return
 
-
-# def normalize_img(img):
-#     img = tf.cast(img, dtype=tf.float32)
-#     # Map values in the range [-1, 1]
-#     return (img / 127.5) - 1.0
-
-# def augment_image(image):
-#     # Randomly flip the image horizontally
-#     image = tf.image.random_flip_left_right(image)
-   
-#     # Randomly adjust brightness
-#     image = tf.image.random_brightness(image, max_delta=0.1)
-#     # Randomly adjust contrast
-#     image = tf.image.random_contrast(image, lower=0.9, upper=1.1)
-#     # Randomly adjust saturation
-#     image = tf.image.random_saturation(image, lower=0.9, upper=1.1)
-#     # Randomly adjust hue
-#     image = tf.image.random_hue(image, max_delta=0.1)
-    
-#     image = tf.image.random_crip(image, size=[*INPUTSHAPE])
-#     return image
-
 dataset, x_test, y_test = load_and_preprocess_data()
 
 import model as modelBuilder

@@ -264,7 +264,7 @@ class CycleGan(keras.Model):
         discriminator_X,
         discriminator_Y,
         lambda_cycle=10.0,
-        lambda_identity=0.5,
+        lambda_identity=0.6,
     ):
         super().__init__()
         self.gen_G = generator_G
@@ -410,57 +410,3 @@ def discriminator_loss_fn(real, fake):
     real_loss = adv_loss_fn(tf.ones_like(real), real)
     fake_loss = adv_loss_fn(tf.zeros_like(fake), fake)
     return (real_loss + fake_loss) * 0.5
-
-
-# # Create cycle gan model
-# cycle_gan_model = CycleGan(
-#     generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y
-# )
-
-# # Compile the model
-# cycle_gan_model.compile(
-#     gen_G_optimizer=keras.optimizers.Adam(learning_rate=2e-4, beta_1=0.5),
-#     gen_F_optimizer=keras.optimizers.Adam(learning_rate=2e-4, beta_1=0.5),
-#     disc_X_optimizer=keras.optimizers.Adam(learning_rate=2e-4, beta_1=0.5),
-#     disc_Y_optimizer=keras.optimizers.Adam(learning_rate=2e-4, beta_1=0.5),
-#     gen_loss_fn=generator_loss_fn,
-#     disc_loss_fn=discriminator_loss_fn,
-# )
-
-
-# import numpy as np
-# # load the data processed by prepData
-# """prepData.py MUST BE RUN BEFORE THE MAIN SCRIPT"""
-# try:
-#     data = np.load('dataset.npz')
-# except:
-#     print("You must run prepData.py in order to train the model")
-#     exit
-
-# x_data = data['x_data']
-# y_data = data['y_data']
-
-
-# x_train = x_data
-# y_train = y_data
-# # (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data("mnist.npz")
-
-# x_train = x_train.astype("float32") / 255
-
-# y_train = y_train.astype("float32") / 255
-
-
-# x_train = np.expand_dims(x_train, -1)
-
-# y_train = np.expand_dims(y_train, -1)
-
-
-# x_train = np.squeeze(x_train)
-
-# y_train = np.squeeze(y_train)
-
-
-
-# # Here we will train the model for just one epoch as each epoch takes around
-# # 7 minutes on a single P100 backed machine.
-# cycle_gan_model.fit(x_train, y_train, epochs=1)
