@@ -65,12 +65,13 @@ disc_Y = modelBuilder.get_discriminator(name="discriminator_Y")
 model = modelBuilder.CycleGan(
     generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y
     )
-scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=1e-3,decay_steps=1000,decay_rate=0.9)
+scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=0.0003,decay_steps=2000,decay_rate=0.9)
+
 model.compile(
-    gen_G_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
-    gen_F_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
-    disc_X_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
-    disc_Y_optimizer=keras.optimizers.Adam(learning_rate=scheduler, beta_1=0.6),
+    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
+    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
+    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
+    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
@@ -108,7 +109,11 @@ for i in range(num_images):
     # elif i % 3 == 1:
     #     img = np.squeeze(y_test[(i - 1) // 3])
     else:
-        img = np.squeeze(result[(i - 1) // 2])
+        image = x_test[(i - 1) // 2]
+        image.reshape(None, 255, 255, 3)
+        result = model.gen_G(image)
+        
+        img = np.squeeze(result)
     
     img = (img * 127.5 + 127.5).astype(np.uint8)
     plt.imshow(img)
