@@ -82,7 +82,7 @@ except Exception as e:
     print("model failed to load, exiting")
     exit()
 import gc
-model = model.gen_G
+model
 
 del gen_F
 del disc_X
@@ -96,7 +96,7 @@ gc.collect()
 rows = 4
 cols = 4
 num_images = rows*cols
-result = model(x_test[0:(num_images//2)])
+# result = model(x_test[0:(num_images//2)])
 figure = plt.figure(figsize=(10, 10))
 for i in range(num_images):
     plt.subplot(rows, cols, i + 1)
