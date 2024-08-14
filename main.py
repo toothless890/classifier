@@ -161,10 +161,10 @@ except Exception as e:
     
     
 model.compile(
-    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
-    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
-    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
-    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
+    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
+    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
+    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
+    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
@@ -174,8 +174,8 @@ def show_test_dataset(a, b):
     variables.epochcounter += 1
 
     # Perform actions only every few epochs
-    if variables.epochcounter % 2 != 0: 
-        return
+    # if variables.epochcounter % 2 != 0: 
+    #     return
     
     # Generate images
     # result = model.gen_G(x_test)
