@@ -12,7 +12,7 @@ INPUTSHAPE=variables.INPUTSHAPE
 IMAGE_SIZE=variables.IMAGE_SIZE
 
 
-keras.mixed_precision.set_global_policy('mixed_float16')
+# keras.mixed_precision.set_global_policy('mixed_float16')
 
 class ReflectionPadding2D(layers.Layer):
     """Implements Reflection Padding as a layer.
@@ -179,25 +179,25 @@ def get_resnet_generator(
     x = layers.Conv2D(filters, (7, 7), kernel_initializer=kernel_init, use_bias=False)(x)
     # x = tfa.layers.InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     x = InstanceNormalization(gamma_initializer=gamma_initializer)(x)
-    # x = layers.Activation("relu")(x)
-    x = layers.ReLU()(x)
+    x = layers.Activation("relu")(x)
+    # x = layers.ReLU()(x)
 
     # Downsampling
     for _ in range(num_downsampling_blocks):
         filters *= 2
-        x = downsample(x, filters=filters, activation=layers.LeakyReLU())
-        # x = downsample(x, filters=filters, activation=layers.Activation("relu"))
+        # x = downsample(x, filters=filters, activation=layers.LeakyReLU())
+        x = downsample(x, filters=filters, activation=layers.Activation("relu"))
 
     # Residual blocks
     for _ in range(num_residual_blocks):
-        x = residual_block(x, activation=layers.LeakyReLU())
-        # x = residual_block(x, activation=layers.Activation("relu"))
+        # x = residual_block(x, activation=layers.LeakyReLU())
+        x = residual_block(x, activation=layers.Activation("relu"))
 
     # Upsampling
     for _ in range(num_upsample_blocks):
         filters //= 2
-        x = upsample(x, filters, activation=layers.LeakyReLU())
-        # x = upsample(x, filters, activation=layers.Activation("relu"))
+        # x = upsample(x, filters, activation=layers.LeakyReLU())
+        x = upsample(x, filters, activation=layers.Activation("relu"))
 
     # Final block
     x = ReflectionPadding2D(padding=(3, 3))(x)
@@ -394,7 +394,8 @@ class CycleGan(keras.Model):
         }
         
 # Loss function for evaluating adversarial loss
-adv_loss_fn = keras.losses.MeanSquaredError()
+# adv_loss_fn = keras.losses.MeanSquaredError()
+adv_loss_fn = keras.losses.BinaryCrossentropy()
 
 # Define the loss function for the generators
 # @keras.saving.register_keras_serializable()

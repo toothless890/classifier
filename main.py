@@ -30,7 +30,7 @@ for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
 
 
-keras.mixed_precision.set_global_policy('mixed_float16')
+# keras.mixed_precision.set_global_policy('mixed_float16')
 
 tf.experimental.numpy.experimental_enable_numpy_behavior()
 
@@ -105,8 +105,8 @@ def load_and_preprocess_data():
     return dataset, x_test, y_test
 
 def warmup_gpu():
-    x = tf.random.normal([1, 64, 64, 3])
-    y = tf.random.normal([1, 64, 64, 3])
+    x = tf.random.normal([1, 256, 256, 3])
+    y = tf.random.normal([1, 256, 256, 3])
     model = tf.keras.Sequential([
         tf.keras.layers.Conv2D(32, (3, 3), activation='relu', padding='same'),
         tf.keras.layers.MaxPooling2D((2, 2))
@@ -150,7 +150,7 @@ disc_Y = modelBuilder.get_discriminator(name="discriminator_Y")
 model = modelBuilder.CycleGan(
     generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y
     )
-scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=0.0004,decay_steps=2000,decay_rate=0.9)
+scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=0.0003,decay_steps=2000,decay_rate=0.9)
 
 try:
     model.load_weights(checkpoint_filepath)
