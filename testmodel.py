@@ -84,7 +84,7 @@ except Exception as e:
 import gc
 model
 
-del gen_F
+# del gen_F
 del disc_X
 del disc_Y
 # del data
@@ -93,8 +93,8 @@ gc.collect()
     
 # Plot and save images
 
-rows = 4
-cols = 4
+rows = 6
+cols = 6
 num_images = rows*cols
 # result = model(x_test[0:(num_images//2)])
 figure = plt.figure(figsize=(10, 10))
@@ -104,12 +104,15 @@ for i in range(num_images):
     plt.yticks([])
     plt.grid(False)
 
-    if i % 2 == 0:
+    if i % 3 == 0:
         img = np.squeeze(x_test[i // 2])
-    # elif i % 3 == 1:
-    #     img = np.squeeze(y_test[(i - 1) // 3])
+    elif i % 3 == 1:
+        image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
+        result = model.gen_G(image)
+        
+        img = np.squeeze(model.gen_F(result))
     else:
-        image = x_test[((i - 1) // 2):((i - 1) // 2)+1]
+        image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
         result = model.gen_G(image)
         
         img = np.squeeze(result)

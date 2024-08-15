@@ -182,8 +182,8 @@ def show_test_dataset(a, b):
     
     # Plot and save images
     
-    rows = 4
-    cols = 4
+    rows = 6
+    cols = 6
     num_images = rows*cols
     #TODO: make this use batches, of a changable size (i tried isolating one image and it didnt work, investigate more!) 
     
@@ -194,17 +194,18 @@ def show_test_dataset(a, b):
         plt.yticks([])
         plt.grid(False)
 
-        if i % 2 == 0:
+        if i % 3 == 0:
             img = np.squeeze(x_test[i // 2])
-        # elif i % 3 == 1:
-        #     img = np.squeeze(y_test[(i - 1) // 3])
-        else:
+        elif i % 3 == 1:
+            image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
+            result = model.gen_G(image)
             
-            image = x_test[((i - 1) // 2):((i - 1) // 2)+1]
+            img = np.squeeze(model.gen_F(result))
+        else:
+            image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
             result = model.gen_G(image)
             
             img = np.squeeze(result)
-        
         img = (img * 127.5 + 127.5).astype(np.uint8)
         plt.imshow(img)
     # Save the figure to an image and write to TensorBoard
