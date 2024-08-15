@@ -65,19 +65,25 @@ model_checkpoint_callback = keras.callbacks.ModelCheckpoint(
 def augment_image(image, label):
     # Apply random horizontal flip
     image = tf.image.random_flip_left_right(image)
+    label = tf.image.random_flip_left_right(label)
     
     # Apply random rotation
     # image = tf.image.random_rotate(image, 0.2)  # 0.2 radians ~ 11.5 degrees
     
     # Apply random zoom (cropping and resizing back to the original size)
-    # image = tf.image.resize_with_crop_or_pad(image, IMAGE_SIZE + 20, IMAGE_SIZE + 20)  # Add padding
-    # image = tf.image.random_crop(image, size=[IMAGE_SIZE, IMAGE_SIZE, 3])  # Crop back to original size
+    image = tf.image.resize(image,size=[ IMAGE_SIZE[0] + 20, IMAGE_SIZE[1] + 20])  # Add padding
+    image = tf.image.random_crop(image, size=[*INPUTSHAPE])  # Crop back to original size
+    
+    label = tf.image.resize(label, size= [IMAGE_SIZE[0] + 20, IMAGE_SIZE[1] + 20])  # Add padding
+    label = tf.image.random_crop(label, size=[*INPUTSHAPE])  # Crop back to original size
     
     # Apply random brightness adjustment
     image = tf.image.random_brightness(image, max_delta=0.1)
+    label = tf.image.random_brightness(label, max_delta=0.1)
     
     # Apply random contrast adjustment
     image = tf.image.random_contrast(image, lower=0.9, upper=1.1)
+    label = tf.image.random_contrast(label, lower=0.9, upper=1.1)
     
     return image, label
 
