@@ -170,7 +170,7 @@ class CustomLossScheduler(tf.keras.callbacks.Callback):
 # Usage in your training script
 
 # Parameters
-initial_lr = 0.0004
+initial_lr = 0.0002
 final_lr = 0.00005
 regularization_weight = 0.01  # Adjust based on the desired smoothing effect
 total_epochs = 200
