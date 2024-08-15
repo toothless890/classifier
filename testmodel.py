@@ -106,16 +106,17 @@ for i in range(num_images):
 
     if i % 3 == 0:
         img = np.squeeze(x_test[i // 3])
+        
     elif i % 3 == 1:
         image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
         result = model.gen_G(image)
+        img = np.squeeze(result)
         
-        img = np.squeeze(model.gen_F(result))
     else:
         image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
-        result = model.gen_G(image)
+        result = model.gen_G(image)[0]
+        img = np.squeeze(model.gen_F(result)[0])
         
-        img = np.squeeze(result)
     
     img = (img * 127.5 + 127.5).astype(np.uint8)
     plt.imshow(img)

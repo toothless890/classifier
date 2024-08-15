@@ -180,7 +180,7 @@ def get_resnet_generator(
     # x = tfa.layers.InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     x = InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     # x = layers.Activation("relu")(x)
-    x = layers.ReLU()(x)
+    x = layers.LeakyReLU()(x)
 
     # Downsampling
     for _ in range(num_downsampling_blocks):
@@ -249,12 +249,12 @@ def get_discriminator(
 
 
 # Get the generators
-gen_G = get_resnet_generator(name="generator_G")
-gen_F = get_resnet_generator(name="generator_F")
+# gen_G = get_resnet_generator(name="generator_G")
+# gen_F = get_resnet_generator(name="generator_F")
 
-# Get the discriminators
-disc_X = get_discriminator(name="discriminator_X")
-disc_Y = get_discriminator(name="discriminator_Y")
+# # Get the discriminators
+# disc_X = get_discriminator(name="discriminator_X")
+# disc_Y = get_discriminator(name="discriminator_Y")
 
 class CycleGan(keras.Model):
     def __init__(
@@ -394,8 +394,8 @@ class CycleGan(keras.Model):
         }
         
 # Loss function for evaluating adversarial loss
-# adv_loss_fn = keras.losses.MeanSquaredError()
-adv_loss_fn = keras.losses.BinaryCrossentropy()
+adv_loss_fn = keras.losses.MeanSquaredError()
+# adv_loss_fn = keras.losses.BinaryCrossentropy()
 
 # Define the loss function for the generators
 # @keras.saving.register_keras_serializable()

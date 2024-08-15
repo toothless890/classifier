@@ -136,6 +136,55 @@ def warmup_gpu():
 #     image = tf.image.random_crip(image, size=[*INPUTSHAPE])
 #     return image
 
+class CustomLossScheduler(tf.keras.callbacks.Callback):
+    def __init__(self, initial_lr, final_lr, regularization_weight, total_epochs, decay_start_epoch=100):
+        super(CustomLossScheduler, self).__init__()
+        self.initial_lr = initial_lr
+        self.final_lr = final_lr
+        self.regularization_weight = regularization_weight
+        self.total_epochs = total_epochs
+        self.decay_start_epoch = decay_start_epoch
+        self.lr = initial_lr
+
+    def on_epoch_begin(self, epoch, logs=None):
+        # Linearly decay learning rate after decay_start_epoch
+        if epoch >= self.decay_start_epoch:
+            decay_factor = (epoch - self.decay_start_epoch) / (self.total_epochs - self.decay_start_epoch)
+            self.lr = self.initial_lr - decay_factor * (self.initial_lr - self.final_lr)
+        
+        # Adjust regularization weight (e.g., increase as training progresses)
+        reg_weight = self.regularization_weight * (1 - epoch / self.total_epochs)
+        
+        # Apply the new learning rate to the optimizers
+        self.model.gen_G_optimizer.learning_rate = self.lr
+        self.model.gen_F_optimizer.learning_rate = self.lr
+        self.model.disc_X_optimizer.learning_rate = self.lr
+        self.model.disc_Y_optimizer.learning_rate = self.lr
+
+        
+        # If you are using custom regularization in the loss function, you can pass the reg_weight to your model
+        self.model.regularization_weight = reg_weight
+
+        print(f"Epoch {epoch + 1}/{self.total_epochs} - Learning Rate: {self.lr:.6f} - Regularization Weight: {reg_weight:.6f}")
+
+# Usage in your training script
+
+# Parameters
+initial_lr = 0.0004
+final_lr = 0.00005
+regularization_weight = 0.01  # Adjust based on the desired smoothing effect
+total_epochs = 200
+decay_start_epoch = 100  # Start decaying after 100 epochs
+
+# Initialize the custom scheduler
+custom_loss_scheduler = CustomLossScheduler(
+    initial_lr=initial_lr,
+    final_lr=final_lr,
+    regularization_weight=regularization_weight,
+    total_epochs=total_epochs,
+    decay_start_epoch=decay_start_epoch
+)
+
 dataset, x_test, y_test = load_and_preprocess_data()
 
 import model as modelBuilder
@@ -148,9 +197,9 @@ disc_X = modelBuilder.get_discriminator(name="discriminator_X")
 disc_Y = modelBuilder.get_discriminator(name="discriminator_Y")
 
 model = modelBuilder.CycleGan(
-    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y
-    )
-scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=0.0003,decay_steps=3000,decay_rate=0.9)
+    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y)
+
+
 
 try:
     model.load_weights(checkpoint_filepath)
@@ -161,10 +210,10 @@ except Exception as e:
     
     
 model.compile(
-    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
-    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
-    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
-    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.5),
+    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=0.0002, beta_1=0.5),
+    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=0.0002, beta_1=0.5),
+    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=0.0002, beta_1=0.5),
+    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=0.0002, beta_1=0.5),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
@@ -199,13 +248,13 @@ def show_test_dataset(a, b):
         elif i % 3 == 1:
             image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
             result = model.gen_G(image)
+            img = np.squeeze(result)
             
-            img = np.squeeze(model.gen_F(result))
         else:
             image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
             result = model.gen_G(image)
+            img = np.squeeze(model.gen_F(result))
             
-            img = np.squeeze(result)
         img = (img * 127.5 + 127.5).astype(np.uint8)
         plt.imshow(img)
     # Save the figure to an image and write to TensorBoard
@@ -228,5 +277,5 @@ warmup_gpu()
 
 print("training model")
 # Train your model
-model.fit(dataset, batch_size=BATCH_SIZE, epochs=EPOCHS, callbacks=[model_checkpoint_callback, tensorboard_callback, drawImages]) #drawImages,
+model.fit(dataset, batch_size=BATCH_SIZE, epochs=EPOCHS, callbacks=[model_checkpoint_callback, tensorboard_callback, drawImages, custom_loss_scheduler]) #drawImages,
 print("completed training")
