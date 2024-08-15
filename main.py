@@ -61,6 +61,26 @@ model_checkpoint_callback = keras.callbacks.ModelCheckpoint(
     # save_best_only=True
     )
 
+
+def augment_image(image, label):
+    # Apply random horizontal flip
+    image = tf.image.random_flip_left_right(image)
+    
+    # Apply random rotation
+    # image = tf.image.random_rotate(image, 0.2)  # 0.2 radians ~ 11.5 degrees
+    
+    # Apply random zoom (cropping and resizing back to the original size)
+    # image = tf.image.resize_with_crop_or_pad(image, IMAGE_SIZE + 20, IMAGE_SIZE + 20)  # Add padding
+    # image = tf.image.random_crop(image, size=[IMAGE_SIZE, IMAGE_SIZE, 3])  # Crop back to original size
+    
+    # Apply random brightness adjustment
+    image = tf.image.random_brightness(image, max_delta=0.1)
+    
+    # Apply random contrast adjustment
+    image = tf.image.random_contrast(image, lower=0.9, upper=1.1)
+    
+    return image, label
+
 # load the data processed by prepData
 """prepData.py MUST BE RUN BEFORE THE MAIN SCRIPT"""
 
@@ -100,6 +120,7 @@ def load_and_preprocess_data():
     
     dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
     dataset = dataset.shuffle(buffer_size=256)
+    dataset = dataset.map(augment_image, num_parallel_calls=tf.data.AUTOTUNE)
     dataset = dataset.batch(BATCH_SIZE)
     dataset = dataset.prefetch(tf.data.AUTOTUNE)
     return dataset, x_test, y_test
@@ -114,27 +135,6 @@ def warmup_gpu():
     model(x)
     return
 
-
-# def normalize_img(img):
-#     img = tf.cast(img, dtype=tf.float32)
-#     # Map values in the range [-1, 1]
-#     return (img / 127.5) - 1.0
-
-# def augment_image(image):
-#     # Randomly flip the image horizontally
-#     image = tf.image.random_flip_left_right(image)
-   
-#     # Randomly adjust brightness
-#     image = tf.image.random_brightness(image, max_delta=0.1)
-#     # Randomly adjust contrast
-#     image = tf.image.random_contrast(image, lower=0.9, upper=1.1)
-#     # Randomly adjust saturation
-#     image = tf.image.random_saturation(image, lower=0.9, upper=1.1)
-#     # Randomly adjust hue
-#     image = tf.image.random_hue(image, max_delta=0.1)
-    
-#     image = tf.image.random_crip(image, size=[*INPUTSHAPE])
-#     return image
 
 class CustomLossScheduler(tf.keras.callbacks.Callback):
     def __init__(self, initial_lr, final_lr, regularization_weight, total_epochs, decay_start_epoch=100):
@@ -170,8 +170,8 @@ class CustomLossScheduler(tf.keras.callbacks.Callback):
 # Usage in your training script
 
 # Parameters
-initial_lr = 0.0002
-final_lr = 0.00005
+initial_lr = 0.00015
+final_lr = 0.00001
 regularization_weight = 0.01  # Adjust based on the desired smoothing effect
 total_epochs = EPOCHS
 decay_start_epoch = 100  # Start decaying after 100 epochs
