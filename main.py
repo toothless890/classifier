@@ -195,7 +195,7 @@ def show_test_dataset(a, b):
         plt.grid(False)
 
         if i % 3 == 0:
-            img = np.squeeze(x_test[i // 2])
+            img = np.squeeze(x_test[i // 3])
         elif i % 3 == 1:
             image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
             result = model.gen_G(image)
