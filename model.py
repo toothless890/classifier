@@ -264,7 +264,7 @@ class CycleGan(keras.Model):
         discriminator_X,
         discriminator_Y,
         lambda_cycle=10.0,
-        lambda_identity=0.6,
+        lambda_identity=0.5,
     ):
         super().__init__()
         self.gen_G = generator_G
