@@ -173,7 +173,7 @@ class CustomLossScheduler(tf.keras.callbacks.Callback):
 initial_lr = 0.0002
 final_lr = 0.00005
 regularization_weight = 0.01  # Adjust based on the desired smoothing effect
-total_epochs = 200
+total_epochs = EPOCHS
 decay_start_epoch = 100  # Start decaying after 100 epochs
 
 # Initialize the custom scheduler

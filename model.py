@@ -264,7 +264,7 @@ class CycleGan(keras.Model):
         discriminator_X,
         discriminator_Y,
         lambda_cycle=10.0,
-        lambda_identity=0.5,
+        lambda_identity=0.6,
     ):
         super().__init__()
         self.gen_G = generator_G
@@ -394,8 +394,8 @@ class CycleGan(keras.Model):
         }
         
 # Loss function for evaluating adversarial loss
-adv_loss_fn = keras.losses.MeanSquaredError()
-# adv_loss_fn = keras.losses.BinaryCrossentropy()
+# adv_loss_fn = keras.losses.MeanSquaredError()
+adv_loss_fn = keras.losses.BinaryCrossentropy()
 
 # Define the loss function for the generators
 # @keras.saving.register_keras_serializable()
