@@ -98,7 +98,6 @@ def residual_block(
     # x = tfa.layers.InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     x = InstanceNormalization(gamma_initializer=gamma_initializer)(x)   
     x = activation(x)
-    tf.keras.layers
     x = ReflectionPadding2D()(x)
     x = layers.Conv2D(
         dim,
@@ -263,8 +262,8 @@ class CycleGan(keras.Model):
         generator_F,
         discriminator_X,
         discriminator_Y,
-        lambda_cycle=10.0,
-        lambda_identity=0.6,
+        lambda_cycle=15.0,
+        lambda_identity=0.5,
     ):
         super().__init__()
         self.gen_G = generator_G
