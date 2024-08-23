@@ -79,8 +79,8 @@ def augment_image(image, label):
     image = tf.add(image, noise)
     label = tf.add(label, noise)
     
-    # image = tf.image.random_hue(image, 0.05)
-    # label = tf.image.random_hue(label, 0.05)
+    image = tf.image.random_hue(image, 0.05)
+    label = tf.image.random_hue(label, 0.05)
     
     image = tf.image.random_saturation(image, 0.9, 1.1)
     label = tf.image.random_saturation(label, 0.9, 1.1)
@@ -93,8 +93,8 @@ def augment_image(image, label):
     image = tf.image.random_contrast(image, lower=0.9, upper=1.1)
     label = tf.image.random_contrast(label, lower=0.9, upper=1.1)
     
-    image = tf.image.random_jpeg_quality(image, 80, 100)
-    label = tf.image.random_jpeg_quality(label, 80, 100)
+    # image = tf.image.random_jpeg_quality(image, 80, 100)
+    # label = tf.image.random_jpeg_quality(label, 80, 100)
     
     return image, label
 
