@@ -39,7 +39,8 @@ NUM_CLASSES = len(CLASSNAMES)
 
 IMAGE_SIZE=variables.IMAGE_SIZE
 #usually scaled in powers of 2, reduce this number if running out of vram. increase for faster epochs
-BATCH_SIZE = 1
+BATCH_SIZE = 2
+
 
 INPUTSHAPE = variables.INPUTSHAPE  
 RESHAPE = variables.RESHAPE
@@ -67,8 +68,11 @@ def augment_image(image, label):
     label = tf.image.random_flip_left_right(label)
 
     # Apply random zoom (cropping and resizing back to the original size)
-    image = tf.image.random_crop(image, size=[IMAGE_SIZE[0] - 10, IMAGE_SIZE[1] - 10, 3])
-    label = tf.image.random_crop(label, size=[IMAGE_SIZE[0] - 10, IMAGE_SIZE[1] - 10, 3])
+    image = tf.image.resize(image,size=[ IMAGE_SIZE[0] + 20, IMAGE_SIZE[1] + 20])  # Add padding
+    image = tf.image.random_crop(image, size=[*INPUTSHAPE])  # Crop back to original size
+    
+    label = tf.image.resize(label, size= [IMAGE_SIZE[0] + 20, IMAGE_SIZE[1] + 20])  # Add padding
+    label = tf.image.random_crop(label, size=[*INPUTSHAPE])  # Crop back to original size
 
     
     # noise = tf.random.normal(shape=tf.shape(image), mean=0.0, stddev=0.02, dtype=tf.float32)
@@ -82,12 +86,12 @@ def augment_image(image, label):
     label = tf.image.random_saturation(label, 0.9, 1.1)
     
     # Apply random brightness adjustment
-    # image = tf.image.random_brightness(image, max_delta=0.1)
-    # label = tf.image.random_brightness(label, max_delta=0.1)
+    image = tf.image.random_brightness(image, max_delta=0.1)
+    label = tf.image.random_brightness(label, max_delta=0.1)
     
     # Apply random contrast adjustment
-    # image = tf.image.random_contrast(image, lower=0.9, upper=1.1)
-    # label = tf.image.random_contrast(label, lower=0.9, upper=1.1)
+    image = tf.image.random_contrast(image, lower=0.9, upper=1.1)
+    label = tf.image.random_contrast(label, lower=0.9, upper=1.1)
     
     image = tf.image.random_jpeg_quality(image, 80, 100)
     label = tf.image.random_jpeg_quality(label, 80, 100)
