@@ -82,12 +82,12 @@ def augment_image(image, label):
     label = tf.image.random_saturation(label, 0.9, 1.1)
     
     # Apply random brightness adjustment
-    image = tf.image.random_brightness(image, max_delta=0.1)
-    label = tf.image.random_brightness(label, max_delta=0.1)
+    # image = tf.image.random_brightness(image, max_delta=0.1)
+    # label = tf.image.random_brightness(label, max_delta=0.1)
     
     # Apply random contrast adjustment
-    image = tf.image.random_contrast(image, lower=0.9, upper=1.1)
-    label = tf.image.random_contrast(label, lower=0.9, upper=1.1)
+    # image = tf.image.random_contrast(image, lower=0.9, upper=1.1)
+    # label = tf.image.random_contrast(label, lower=0.9, upper=1.1)
     
     image = tf.image.random_jpeg_quality(image, 80, 100)
     label = tf.image.random_jpeg_quality(label, 80, 100)
