@@ -39,7 +39,7 @@ NUM_CLASSES = len(CLASSNAMES)
 
 IMAGE_SIZE=variables.IMAGE_SIZE
 #usually scaled in powers of 2, reduce this number if running out of vram. increase for faster epochs
-BATCH_SIZE = 1
+BATCH_SIZE = 2
 
 INPUTSHAPE = variables.INPUTSHAPE  
 RESHAPE = variables.RESHAPE
