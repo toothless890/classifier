@@ -97,6 +97,7 @@ rows = 6
 cols = 6
 num_images = rows*cols
 # result = model(x_test[0:(num_images//2)])
+
 figure = plt.figure(figsize=(10, 10))
 for i in range(num_images):
     plt.subplot(rows, cols, i + 1)
@@ -106,7 +107,6 @@ for i in range(num_images):
 
     if i % 3 == 0:
         img = np.squeeze(x_test[i // 3])
-        
     elif i % 3 == 1:
         image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
         result = model.gen_G(image)
@@ -114,10 +114,10 @@ for i in range(num_images):
         
     else:
         image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
-        result = model.gen_G(image)[0]
-        img = np.squeeze(model.gen_F(result)[0])
+        result = model.gen_G(image)
+        img = np.squeeze(model.gen_F(result))
         
-    
     img = (img * 127.5 + 127.5).astype(np.uint8)
     plt.imshow(img)
+
     plt.savefig("latestModel.png")
