@@ -23,12 +23,6 @@ CLASSNAMES = sorted(os.listdir(DIRECTORY+"training"))
 #overrride
 # CLASSNAMES = ["0", "1","2","3","4","5","6","7","8","9"]
 
-#How many epochs to run for?
-# set to high number to run until stopped
-# (the NN gets saved in a checkpoint each epoch with an improvement, so you can resume training
-#  at the expense of it starting a new tensorboard log)
-global EPOCHS
-EPOCHS = 300
 
 # THIS DETERMINES THE SIZE OF THE IMAGE THAT THE NEURAL NETWORK TRAINS ON
 # smaller values will run faster, but may be more limited in accuracy. 

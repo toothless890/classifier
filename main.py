@@ -44,7 +44,6 @@ BATCH_SIZE = 1
 INPUTSHAPE = variables.INPUTSHAPE  
 RESHAPE = variables.RESHAPE
 
-EPOCHS = variables.EPOCHS
 
 checkpoint_filepath = variables.checkpoint_filepath
 
@@ -66,16 +65,21 @@ def augment_image(image, label):
     # Apply random horizontal flip
     image = tf.image.random_flip_left_right(image)
     label = tf.image.random_flip_left_right(label)
-    
-    # Apply random rotation
-    # image = tf.image.random_rotate(image, 0.2)  # 0.2 radians ~ 11.5 degrees
-    
+
     # Apply random zoom (cropping and resizing back to the original size)
-    image = tf.image.resize(image,size=[ IMAGE_SIZE[0] + 20, IMAGE_SIZE[1] + 20])  # Add padding
-    image = tf.image.random_crop(image, size=[*INPUTSHAPE])  # Crop back to original size
+    image = tf.image.random_crop(image, size=[IMAGE_SIZE[0] - 10, IMAGE_SIZE[1] - 10, 3])
+    label = tf.image.random_crop(label, size=[IMAGE_SIZE[0] - 10, IMAGE_SIZE[1] - 10, 3])
+
     
-    label = tf.image.resize(label, size= [IMAGE_SIZE[0] + 20, IMAGE_SIZE[1] + 20])  # Add padding
-    label = tf.image.random_crop(label, size=[*INPUTSHAPE])  # Crop back to original size
+    # noise = tf.random.normal(shape=tf.shape(image), mean=0.0, stddev=0.02, dtype=tf.float32)
+    # image = tf.add(image, noise)
+    # label = tf.add(label, noise)
+    
+    image = tf.image.random_hue(image, 0.05)
+    label = tf.image.random_hue(label, 0.05)
+    
+    image = tf.image.random_saturation(image, 0.9, 1.1)
+    label = tf.image.random_saturation(label, 0.9, 1.1)
     
     # Apply random brightness adjustment
     image = tf.image.random_brightness(image, max_delta=0.1)
@@ -90,10 +94,6 @@ def augment_image(image, label):
     
     return image, label
 
-# load the data processed by prepData
-"""prepData.py MUST BE RUN BEFORE THE MAIN SCRIPT"""
-
-# (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data("mnist.npz")
 
 def load_and_preprocess_data():
     # Load the .npz file
@@ -182,7 +182,7 @@ class CustomLossScheduler(tf.keras.callbacks.Callback):
 initial_lr = 0.00015
 final_lr = 0.00001
 regularization_weight = 0.01  # Adjust based on the desired smoothing effect
-total_epochs = EPOCHS
+total_epochs = 300
 decay_start_epoch = 100  # Start decaying after 100 epochs
 
 # Initialize the custom scheduler
@@ -219,10 +219,10 @@ except Exception as e:
     
     
 model.compile(
-    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=0.0002, beta_1=0.4),
-    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=0.0002, beta_1=0.4),
-    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=0.0002, beta_1=0.5),
-    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=0.0002, beta_1=0.5),
+    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.4),
+    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.4),
+    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
+    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
@@ -286,5 +286,5 @@ warmup_gpu()
 
 print("training model")
 # Train your model
-model.fit(dataset, batch_size=BATCH_SIZE, epochs=EPOCHS, callbacks=[model_checkpoint_callback, tensorboard_callback, drawImages, custom_loss_scheduler]) #drawImages,
+model.fit(dataset, batch_size=BATCH_SIZE, epochs=total_epochs, callbacks=[model_checkpoint_callback, tensorboard_callback, drawImages, custom_loss_scheduler]) #drawImages,
 print("completed training")
