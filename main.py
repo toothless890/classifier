@@ -129,9 +129,10 @@ def load_and_preprocess_data():
     y_test = y_test.reshape(RESHAPE)
     y_test = y_test.astype(np.float32)
     y_test = (y_test / 127.5) - 1
+    x_train_shuffled = tf.random.shuffle(x_train)
+    y_train_shuffled = tf.random.shuffle(y_train)
     
-    
-    dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
+    dataset = tf.data.Dataset.from_tensor_slices((x_train_shuffled, y_train_shuffled))
     dataset = dataset.shuffle(buffer_size=256)
     dataset = dataset.map(augment_image, num_parallel_calls=tf.data.AUTOTUNE)
     dataset = dataset.batch(BATCH_SIZE)
