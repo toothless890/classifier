@@ -246,15 +246,6 @@ def get_discriminator(
     model = keras.models.Model(inputs=img_input, outputs=x, name=name)
     return model
 
-
-# Get the generators
-# gen_G = get_resnet_generator(name="generator_G")
-# gen_F = get_resnet_generator(name="generator_F")
-
-# # Get the discriminators
-# disc_X = get_discriminator(name="discriminator_X")
-# disc_Y = get_discriminator(name="discriminator_Y")
-
 class CycleGan(keras.Model):
     def __init__(
         self,
