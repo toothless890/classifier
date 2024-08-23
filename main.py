@@ -85,6 +85,9 @@ def augment_image(image, label):
     image = tf.image.random_contrast(image, lower=0.9, upper=1.1)
     label = tf.image.random_contrast(label, lower=0.9, upper=1.1)
     
+    image = tf.image.random_jpeg_quality(image, 80, 100)
+    label = tf.image.random_jpeg_quality(label, 80, 100)
+    
     return image, label
 
 # load the data processed by prepData
@@ -216,8 +219,8 @@ except Exception as e:
     
     
 model.compile(
-    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=0.0002, beta_1=0.5),
-    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=0.0002, beta_1=0.5),
+    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=0.0002, beta_1=0.4),
+    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=0.0002, beta_1=0.4),
     disc_X_optimizer=keras.optimizers.AdamW(learning_rate=0.0002, beta_1=0.5),
     disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=0.0002, beta_1=0.5),
     gen_loss_fn=modelBuilder.generator_loss_fn,
