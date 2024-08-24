@@ -128,12 +128,14 @@ def downsample(
         filters,
         kernel_size,
         strides=strides,
-        kernel_initializer=kernel_initializer,
         padding=padding,
+        kernel_initializer=kernel_initializer,
+        kernel_regularizer=keras.regularizers.l2(1e-4),
         use_bias=use_bias,
     )(x)
     # x = tfa.layers.InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     x = InstanceNormalization(gamma_initializer=gamma_initializer)(x)
+    x = layers.Dropout(0.3)(x)
     if activation:
         x = activation(x)
     return x
@@ -156,6 +158,7 @@ def upsample(
         strides=strides,
         padding=padding,
         kernel_initializer=kernel_initializer,
+        kernel_regularizer=keras.regularizers.l2(1e-4),
         use_bias=use_bias,
     )(x)
     
@@ -163,6 +166,7 @@ def upsample(
     x = InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     if activation:
         x = activation(x)
+    x = layers.Dropout(0.2)(x)
     return x
 
 def get_resnet_generator(
@@ -254,7 +258,7 @@ class CycleGan(keras.Model):
         discriminator_X,
         discriminator_Y,
         lambda_cycle=15.0,
-        lambda_identity=0.5,
+        lambda_identity=0.6,
     ):
         super().__init__()
         self.gen_G = generator_G
@@ -383,6 +387,11 @@ class CycleGan(keras.Model):
             "D_Y_loss": disc_Y_loss,
         }
         
+        
+def add_noise(x, stddev=0.1):
+    noise = tf.random.normal(shape=tf.shape(x), mean=0.0, stddev=stddev, dtype=tf.float32)
+    return x + noise
+
 # Loss function for evaluating adversarial loss
 # adv_loss_fn = keras.losses.MeanSquaredError()
 adv_loss_fn = keras.losses.BinaryCrossentropy()
@@ -397,6 +406,6 @@ def generator_loss_fn(fake):
 # Define the loss function for the discriminators
 # @keras.saving.register_keras_serializable()
 def discriminator_loss_fn(real, fake):
-    real_loss = adv_loss_fn(tf.ones_like(real), real)
-    fake_loss = adv_loss_fn(tf.zeros_like(fake), fake)
+    real_loss = adv_loss_fn(tf.ones_like(real), add_noise(real))
+    fake_loss = adv_loss_fn(tf.zeros_like(fake), add_noise(fake))
     return (real_loss + fake_loss) * 0.5

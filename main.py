@@ -75,9 +75,9 @@ def augment_image(image, label):
     label = tf.image.random_crop(label, size=[*INPUTSHAPE])  # Crop back to original size
 
     
-    noise = tf.random.normal(shape=tf.shape(image), mean=0.0, stddev=0.02, dtype=tf.float32)
-    image = tf.add(image, noise)
-    label = tf.add(label, noise)
+    # noise = tf.random.normal(shape=tf.shape(image), mean=0.0, stddev=0.02, dtype=tf.float32)
+    # image = tf.add(image, noise)
+    # label = tf.add(label, noise)
     
     image = tf.image.random_hue(image, 0.05)
     label = tf.image.random_hue(label, 0.05)
