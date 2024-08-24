@@ -399,13 +399,14 @@ adv_loss_fn = keras.losses.BinaryCrossentropy()
 # Define the loss function for the generators
 # @keras.saving.register_keras_serializable()
 def generator_loss_fn(fake):
-    fake_loss = adv_loss_fn(tf.ones_like(fake), fake)
-    return fake_loss
+    return -tf.reduce_mean(fake)
+    # fake_loss = adv_loss_fn(tf.ones_like(fake), fake)
+    # return fake_loss
 
 
 # Define the loss function for the discriminators
 # @keras.saving.register_keras_serializable()
 def discriminator_loss_fn(real, fake):
-    real_loss = adv_loss_fn(tf.ones_like(real), add_noise(real))
-    fake_loss = adv_loss_fn(tf.zeros_like(fake), add_noise(fake))
+    real_loss = tf.reduce_mean(tf.nn.relu(1.0 - real))
+    fake_loss = tf.reduce_mean(tf.nn.relu(1.0 + fake))
     return (real_loss + fake_loss) * 0.5
