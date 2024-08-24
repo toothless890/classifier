@@ -133,8 +133,10 @@ def load_and_preprocess_data():
     x_train = tf.random.shuffle(x_train)
     y_train = tf.random.shuffle(y_train)
     
-    dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
+    dataset_x = tf.data.Dataset.from_tensor_slices(x_train)
+    dataset_y = tf.data.Dataset.from_tensor_slices(y_train)
     # dataset = dataset.shuffle(buffer_size=256)
+    dataset = tf.data.Dataset.zip((dataset_x, dataset_y))
     dataset = dataset.map(augment_image, num_parallel_calls=tf.data.AUTOTUNE)
     dataset = dataset.batch(BATCH_SIZE)
     dataset = dataset.prefetch(tf.data.AUTOTUNE)

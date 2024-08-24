@@ -35,10 +35,10 @@ def load_data(data_dir):
         outpath = os.path.join(data_dir, "real")
         if not os.path.isdir(inpath):
             continue
-        print(class_dir, ": ", str(len(os.listdir(inpath))))
+        # print(class_dir, ": ", str(len(os.listdir(inpath))))
         count = 0
     for img_file in os.listdir(inpath):
-        # if count >= 1000:
+        # if count >= 100:
         #     break
         count +=1
         img_path = os.path.join(inpath, img_file)
@@ -53,7 +53,7 @@ def load_data(data_dir):
             print(f"Failed to process image {img_path}: {e}")
             
     for img_file in os.listdir(outpath):    
-        # if count >= 1000:
+        # if count >= 101:
         #     break    
         img_path = os.path.join(outpath, img_file)
         try:
@@ -74,9 +74,17 @@ if __name__ == "__main__":
     # Load all data
     data_dir = DIRECTORY+'training'
     x_data, y_data = load_data(data_dir)
+    x_test_count = len(x_data)//10
+    y_test_count = len(y_data)//10
     
-    x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=VALIDATION_SPLIT, random_state=SEED)
-    print(len(y_test))
+    x_test = x_data[0:x_test_count]
+    y_test = y_data[0:y_test_count]
+    
+    x_train = x_data[x_test_count+1:]
+    y_train = y_data[x_test_count+1:]
+    
+    
+    # x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=VALIDATION_SPLIT, random_state=SEED)
     # Split the data into training and testing sets
     # 
 
@@ -93,10 +101,10 @@ if __name__ == "__main__":
     x_test = x_test.reshape(RESHAPE)
     y_test = y_test.reshape(RESHAPE)
     
-    # print('x_train shape:', x_train.shape)
-    # print('y_train shape:', y_train.shape)
-    # print('x_test shape:', x_test.shape)
-    # print('y_test shape:', y_test.shape)
+    print('x_train shape:', x_train.shape)
+    print('y_train shape:', y_train.shape)
+    print('x_test shape:', x_test.shape)
+    print('y_test shape:', y_test.shape)
    
 
     np.savez_compressed(DIRECTORY+'/dataset.npz', x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test)
