@@ -97,6 +97,7 @@ def residual_block(
     )(x)
     # x = tfa.layers.InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     x = InstanceNormalization(gamma_initializer=gamma_initializer)(x)   
+    x = layers.Dropout(0.2)(x)
     x = activation(x)
     x = ReflectionPadding2D()(x)
     x = layers.Conv2D(
@@ -109,6 +110,7 @@ def residual_block(
     )(x)
     # x = tfa.layers.InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     x = InstanceNormalization(gamma_initializer=gamma_initializer)(x)
+    x = layers.Dropout(0.2)(x)
     x = layers.add([input_tensor, x])
     return x
 
@@ -135,7 +137,7 @@ def downsample(
     )(x)
     # x = tfa.layers.InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     x = InstanceNormalization(gamma_initializer=gamma_initializer)(x)
-    x = layers.Dropout(0.3)(x)
+    x = layers.Dropout(0.4)(x)
     if activation:
         x = activation(x)
     return x
@@ -166,7 +168,7 @@ def upsample(
     x = InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     if activation:
         x = activation(x)
-    x = layers.Dropout(0.2)(x)
+    x = layers.Dropout(0.4)(x)
     return x
 
 def get_resnet_generator(
