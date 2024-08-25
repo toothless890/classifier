@@ -1,5 +1,6 @@
 import os
 import sys
+import io
 # os.environ["KERAS_BACKEND"] = "tensorflow"  # Or "jax" or "torch"!
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 # os.environ['XLA_FLAGS'] = '--xla_hlo_profile'  # Reduces verbosity of XLA
@@ -233,6 +234,24 @@ model.compile(
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
+
+def plot_to_image(figure):
+    """Converts the matplotlib plot specified by 'figure' to a PNG image and
+    returns it. The supplied figure is closed and inaccessible after this call."""
+    """ CHATGPT + TENSORFLOW DOCS"""
+    # Save the plot to a PNG in memory.
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    # Closing the figure prevents it from being displayed directly inside
+    # the notebook.
+    plt.close(figure)
+    buf.seek(0)
+    # Convert PNG buffer to TF image
+    image = tf.image.decode_png(buf.getvalue(), channels=4)
+    # Add the batch dimension
+    image = tf.expand_dims(image, 0)
+    return image
+
 # create a test strip displayed in tensorboard
 def show_test_dataset(a, b):
     # Increment the epoch counter
@@ -241,10 +260,6 @@ def show_test_dataset(a, b):
     # Perform actions only every few epochs
     # if variables.epochcounter % 2 != 0: 
     #     return
-    
-    # Generate images
-    # result = model.gen_G(x_test)
-    
     # Plot and save images
     
     rows = 6
@@ -274,7 +289,7 @@ def show_test_dataset(a, b):
         img = (img * 127.5 + 127.5).astype(np.uint8)
         plt.imshow(img)
     # Save the figure to an image and write to TensorBoard
-    full_image = variables.plot_to_image(figure)
+    full_image = plot_to_image(figure)
     with file_writer.as_default():
         tf.summary.image("latest classifications", full_image, step=variables.epochcounter)
 

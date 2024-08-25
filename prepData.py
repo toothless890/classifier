@@ -24,23 +24,21 @@ def copy_with_structure(source_dir, destination_dir):
     shutil.copy2(source_dir, destination_dir)
 
 
-def load_data(data_dir):
+def load_data(data_dir, folder):
     """ Load data from the directory structure. """
     imagein = []
-    imageout = []
-    
+    inpath = os.path.join(data_dir, folder)
     class_names = sorted(os.listdir(data_dir))
     for label, class_dir in enumerate(class_names): 
-        inpath = os.path.join(data_dir, "fake")
-        outpath = os.path.join(data_dir, "real")
+        
         if not os.path.isdir(inpath):
             continue
         # print(class_dir, ": ", str(len(os.listdir(inpath))))
         count = 0
-    for img_file in os.listdir(inpath):
-        # if count >= 100:
-        #     break
-        count +=1
+    paths = os.listdir(inpath)
+    for img_file in paths:
+        
+        
         img_path = os.path.join(inpath, img_file)
         try:
             img = Image.open(img_path).convert('RGB')   # CHANGE 'RGB' TO 'L' FOR GRAYSCALE, 
@@ -48,32 +46,24 @@ def load_data(data_dir):
             img = img.resize(IMAGE_SIZE, resample=Image.Resampling.BICUBIC  )  # resize to 28x28 pixels
             img_array = np.array(img)
             imagein.append(img_array)
-
+            
         except Exception as e:
             print(f"Failed to process image {img_path}: {e}")
-            
-    for img_file in os.listdir(outpath):    
-        # if count >= 101:
-        #     break    
-        img_path = os.path.join(outpath, img_file)
-        try:
-            img = Image.open(img_path).convert('RGB')   # CHANGE 'RGB' TO 'L' FOR GRAYSCALE, 
-                                                        # MAKE SURE TO CHANGE global INPUTSHAPE in variables.py
-            img = img.resize(IMAGE_SIZE, resample=Image.Resampling.BICUBIC  )  # resize to 28x28 pixels
-            img_array2 = np.array(img)
-            imageout.append(img_array2)
-
-        except Exception as e:
-            print(f"Failed to process image {img_path}: {e}")
-            
+        count +=1
+        # if count >= 1000:
+        #     break
+        if (count%(len(paths)//100))==0:
+            print((count/len(paths)*100)//1)
         
-    return np.array(imagein), np.array(imageout)
+    return np.array(imagein)
 
 if __name__ == "__main__":
 
     # Load all data
     data_dir = DIRECTORY+'training'
-    x_data, y_data = load_data(data_dir)
+    x_data = load_data(data_dir, 'fake')
+    y_data = load_data(data_dir, 'real')
+    
     x_test_count = len(x_data)//10
     y_test_count = len(y_data)//10
     

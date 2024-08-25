@@ -8,6 +8,8 @@ import variables
 DIRECTORY = variables.DIRECTORY
 
 def process_image(img_path, output_folder_fake, output_folder_real, count):
+    if count > 1000:
+        return count
     try:
         img = cv2.imread(img_path)  # Use OpenCV to read the image
         height, width, _ = img.shape
@@ -17,7 +19,7 @@ def process_image(img_path, output_folder_fake, output_folder_real, count):
         
         cv2.imwrite(os.path.join(output_folder_fake, f"{count}.png"), left_half)
         cv2.imwrite(os.path.join(output_folder_real, f"{count}.png"), right_half)
-        
+
         if count % 50 == 0:
             print(count)
         return count + 1

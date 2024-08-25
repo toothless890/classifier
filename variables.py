@@ -1,8 +1,3 @@
-import matplotlib.pyplot as plt
-import itertools
-import numpy as np
-import tensorflow as tf
-import io
 import os
 # This file is the main file for storing variables that need to be replicated across multiple scripts
 # Brief descriptions will be provided for each changable variable
@@ -45,7 +40,7 @@ SEED = 23265
 # Usually datasets are split into training data and validating data
 # SPLIT = the percentage (0.0-1.0) of data to be saved for validation
 global VALIDATION_SPLIT 
-VALIDATION_SPLIT = 0.02
+VALIDATION_SPLIT = 0.01
 
 # validation data is not used to train the model, 
 # but used to check that it can apply it's knowledge to images it hasnt trained on
@@ -63,21 +58,6 @@ checkpoint_filepath = DIRECTORY + 'model.weights.h5'
 #Helper functions
 #TODO: move this back to main.py as there's no need to use it and have to import tensorflow in prepData and other preprocessing steps
 
-def plot_to_image(figure):
-    """Converts the matplotlib plot specified by 'figure' to a PNG image and
-    returns it. The supplied figure is closed and inaccessible after this call."""
-    """ CHATGPT + TENSORFLOW DOCS"""
-    # Save the plot to a PNG in memory.
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    # Closing the figure prevents it from being displayed directly inside
-    # the notebook.
-    plt.close(figure)
-    buf.seek(0)
-    # Convert PNG buffer to TF image
-    image = tf.image.decode_png(buf.getvalue(), channels=4)
-    # Add the batch dimension
-    image = tf.expand_dims(image, 0)
-    return image
+
 if __name__ == "__main__":
     print("this is the variables file and does not need to be run. \n please make sure to run the main, preprocess, or prep files instead!")
