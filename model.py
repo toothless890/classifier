@@ -240,7 +240,7 @@ def get_discriminator(
     x = add_noise(stddev=0.1)(x)
     
     num_filters = filters
-    for num_downsample_block in range(3):
+    for num_downsample_block in range(num_downsampling):
         num_filters *= 2
         if num_downsample_block < 2:
             x = downsample(
@@ -302,6 +302,7 @@ class CycleGan(keras.Model):
         self.discriminator_loss_fn = disc_loss_fn
         self.cycle_loss_fn = keras.losses.MeanAbsoluteError()
         self.identity_loss_fn = keras.losses.MeanAbsoluteError()
+        
 
     def train_step(self, batch_data):
         # x is Horse and y is zebra
@@ -402,8 +403,6 @@ class CycleGan(keras.Model):
             "D_X_loss": disc_X_loss,
             "D_Y_loss": disc_Y_loss,
         }
-        
-        
 
 # Loss function for evaluating adversarial loss
 # adv_loss_fn = keras.losses.MeanSquaredError()
