@@ -131,11 +131,12 @@ def load_and_preprocess_data():
     y_test = y_test.astype(np.float32)
     y_test = (y_test / 127.5) - 1
     
-    x_train = tf.random.shuffle(x_train)
-    y_train = tf.random.shuffle(y_train)
-    
     dataset_x = tf.data.Dataset.from_tensor_slices(x_train)
     dataset_y = tf.data.Dataset.from_tensor_slices(y_train)
+    
+    dataset_x = dataset_x.shuffle(256, reshuffle_each_iteration=True)
+    
+    dataset_y = dataset_y.shuffle(256, reshuffle_each_iteration=True)
     # dataset = dataset.shuffle(buffer_size=256)
     dataset = tf.data.Dataset.zip((dataset_x, dataset_y))
     dataset = dataset.map(augment_image, num_parallel_calls=tf.data.AUTOTUNE)
