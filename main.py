@@ -31,7 +31,7 @@ for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
 
 
-# keras.mixed_precision.set_global_policy('mixed_float16')
+keras.mixed_precision.set_global_policy('mixed_float16')
 
 tf.experimental.numpy.experimental_enable_numpy_behavior()
 
