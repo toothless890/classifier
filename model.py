@@ -73,6 +73,15 @@ class InstanceNormalization(layers.Layer):
     def compute_output_shape(self, input_shape):
         return input_shape
     
+class add_noise(layers.Layer):
+    def __init__(self, stddev=0.1, **kwargs):
+        super(add_noise, self).__init__(**kwargs)
+        self.stddev = stddev
+        
+    def call(self, inputs):
+        noise = tf.random.normal(shape=tf.shape(inputs), mean=0.0, stddev=self.stddev, dtype=tf.float32)
+        return inputs + noise
+
 def residual_block(
     x,
     activation,
@@ -97,8 +106,11 @@ def residual_block(
     )(x)
     # x = tfa.layers.InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     x = InstanceNormalization(gamma_initializer=gamma_initializer)(x)   
-    x = layers.Dropout(0.2)(x)
+    # x = layers.Dropout(0.2)(x)
     x = activation(x)
+    
+    x = add_noise(stddev=0.1)(x)
+    
     x = ReflectionPadding2D()(x)
     x = layers.Conv2D(
         dim,
@@ -110,7 +122,7 @@ def residual_block(
     )(x)
     # x = tfa.layers.InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     x = InstanceNormalization(gamma_initializer=gamma_initializer)(x)
-    x = layers.Dropout(0.2)(x)
+    x = add_noise(stddev=0.1)(x)
     x = layers.add([input_tensor, x])
     return x
 
@@ -224,7 +236,9 @@ def get_discriminator(
         kernel_initializer=kernel_initializer,
     )(img_input)
     x = layers.LeakyReLU(0.2)(x)
-
+    
+    x = add_noise(stddev=0.1)(x)
+    
     num_filters = filters
     for num_downsample_block in range(3):
         num_filters *= 2
@@ -244,7 +258,7 @@ def get_discriminator(
                 kernel_size=(4, 4),
                 strides=(1, 1),
             )
-
+        x = add_noise(stddev=0.1)(x)
     x = layers.Conv2D(
         1, (4, 4), strides=(1, 1), padding="same", kernel_initializer=kernel_initializer
     )(x)
@@ -259,8 +273,8 @@ class CycleGan(keras.Model):
         generator_F,
         discriminator_X,
         discriminator_Y,
-        lambda_cycle=15.0,
-        lambda_identity=0.6,
+        lambda_cycle=10.0,
+        lambda_identity=0.5,
     ):
         super().__init__()
         self.gen_G = generator_G
@@ -390,14 +404,18 @@ class CycleGan(keras.Model):
         }
         
         
-def add_noise(x, stddev=0.1):
-    noise = tf.random.normal(shape=tf.shape(x), mean=0.0, stddev=stddev, dtype=tf.float32)
-    return x + noise
 
 # Loss function for evaluating adversarial loss
 # adv_loss_fn = keras.losses.MeanSquaredError()
 adv_loss_fn = keras.losses.BinaryCrossentropy()
 
+def relativistic_loss(real_output, fake_output):
+    return tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
+        labels=tf.ones_like(real_output), logits=real_output - tf.reduce_mean(fake_output)
+    )) + tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
+        labels=tf.zeros_like(fake_output), logits=fake_output - tf.reduce_mean(real_output)
+    ))
+    
 # Define the loss function for the generators
 # @keras.saving.register_keras_serializable()
 def generator_loss_fn(fake):
@@ -409,6 +427,9 @@ def generator_loss_fn(fake):
 # Define the loss function for the discriminators
 # @keras.saving.register_keras_serializable()
 def discriminator_loss_fn(real, fake):
-    real_loss = tf.reduce_mean(tf.nn.relu(1.0 - real))
-    fake_loss = tf.reduce_mean(tf.nn.relu(1.0 + fake))
-    return (real_loss + fake_loss) * 0.5
+    
+    return relativistic_loss(real, fake)
+    
+    # real_loss = tf.reduce_mean(tf.nn.relu(1.0 - real))
+    # fake_loss = tf.reduce_mean(tf.nn.relu(1.0 + fake))
+    # return (real_loss + fake_loss) * 0.5
