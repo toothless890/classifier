@@ -6,7 +6,7 @@ import multiprocessing
 import variables
 
 DIRECTORY = variables.DIRECTORY
-
+ 
 def process_image(img_path, output_folder_fake, output_folder_real, count):
     if count > 1000:
         return count

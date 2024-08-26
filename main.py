@@ -225,7 +225,6 @@ except Exception as e:
     print(e)
     print("model failed to load, training from scratch")
     
-    
 model.compile(
     gen_G_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
     gen_F_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
