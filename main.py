@@ -188,7 +188,7 @@ class CustomLossScheduler(tf.keras.callbacks.Callback):
 # Usage in your training script
 
 # Parameters
-initial_lr = 0.00015
+initial_lr = 0.0002
 final_lr = 0.00001
 regularization_weight = 0.01  # Adjust based on the desired smoothing effect
 total_epochs = 300
@@ -227,10 +227,10 @@ except Exception as e:
     print("model failed to load, training from scratch")
     
 model.compile(
-    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.45),
-    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.45),
-    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.50),
-    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.50),
+    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
+    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
+    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.55),
+    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.55),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )

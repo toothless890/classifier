@@ -427,8 +427,8 @@ def generator_loss_fn(fake):
 # @keras.saving.register_keras_serializable()
 def discriminator_loss_fn(real, fake):
     
-    return relativistic_loss(real, fake)
+    # return relativistic_loss(real, fake)
     
-    # real_loss = tf.reduce_mean(tf.nn.relu(1.0 - real))
-    # fake_loss = tf.reduce_mean(tf.nn.relu(1.0 + fake))
-    # return (real_loss + fake_loss) * 0.5
+    real_loss = tf.reduce_mean(tf.nn.relu(1.0 - real))
+    fake_loss = tf.reduce_mean(tf.nn.relu(1.0 + fake))
+    return (real_loss + fake_loss) * 0.5
