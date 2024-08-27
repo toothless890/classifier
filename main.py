@@ -229,8 +229,8 @@ except Exception as e:
 model.compile(
     gen_G_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.45),
     gen_F_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.45),
-    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.55),
-    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.55),
+    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.50),
+    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.50),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
