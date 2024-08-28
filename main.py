@@ -191,7 +191,7 @@ class CustomLossScheduler(tf.keras.callbacks.Callback):
 initial_lr = 0.0002
 final_lr = 0.00001
 regularization_weight = 0.01  # Adjust based on the desired smoothing effect
-total_epochs = 300
+total_epochs = 600
 decay_start_epoch = 100  # Start decaying after 100 epochs
 
 # Initialize the custom scheduler
@@ -215,7 +215,7 @@ disc_X = modelBuilder.get_discriminator(name="discriminator_X")
 disc_Y = modelBuilder.get_discriminator(name="discriminator_Y")
 
 model = modelBuilder.CycleGan(
-    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=10.0, lambda_identity = 0.5)
+    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=7.0, lambda_identity = 0.3)
 
 
 
@@ -229,8 +229,8 @@ except Exception as e:
 model.compile(
     gen_G_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
     gen_F_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
-    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.55),
-    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.55),
+    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
+    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
