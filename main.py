@@ -266,7 +266,8 @@ def show_test_dataset(a, b):
     cols = 6
     num_images = rows*cols
     #TODO: make this use batches, of a changable size (i tried isolating one image and it didnt work, investigate more!) 
-    
+    image = None
+    result = None
     figure = plt.figure(figsize=(10, 10))
     for i in range(num_images):
         plt.subplot(rows, cols, i + 1)
@@ -282,8 +283,8 @@ def show_test_dataset(a, b):
             img = np.squeeze(result)
             
         else:
-            image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
-            result = model.gen_G(image)
+            # image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
+            # result = model.gen_G(image)
             img = np.squeeze(model.gen_F(result))
             
         img = (img * 127.5 + 127.5).astype(np.uint8)
