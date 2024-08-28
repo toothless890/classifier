@@ -12,7 +12,7 @@ INPUTSHAPE=variables.INPUTSHAPE
 IMAGE_SIZE=variables.IMAGE_SIZE
 
 
-keras.mixed_precision.set_global_policy('mixed_float16')
+# keras.mixed_precision.set_global_policy('mixed_float16')
 
 class ReflectionPadding2D(layers.Layer):
     """Implements Reflection Padding as a layer.
@@ -193,21 +193,24 @@ def get_resnet_generator(
 ):
     img_input = layers.Input(shape=INPUTSHAPE, name=name + "_img_input")
     x = ReflectionPadding2D(padding=(3, 3))(img_input)
+    
     x = layers.Conv2D(filters, (7, 7), kernel_initializer=kernel_init, use_bias=False)(x)
     # x = tfa.layers.InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     x = InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     # x = layers.Activation("relu")(x)
-    x = layers.LeakyReLU()(x)
+    x = layers.LeakyReLU(negative_slope=0.2)(x)
 
     # Downsampling
     for _ in range(num_downsampling_blocks):
         filters *= 2
         x = downsample(x, filters=filters, activation=layers.LeakyReLU())
+        # x  = layers.Dropout(0.2)(x)
         # x = downsample(x, filters=filters, activation=layers.Activation("relu"))
 
     # Residual blocks
     for _ in range(num_residual_blocks):
         x = residual_block(x, activation=layers.LeakyReLU())
+        x  = layers.Dropout(0.2)(x)
         # x = residual_block(x, activation=layers.Activation("relu"))
 
     # Upsampling
@@ -262,7 +265,7 @@ def get_discriminator(
     x = layers.Conv2D(
         1, (4, 4), strides=(1, 1), padding="same", kernel_initializer=kernel_initializer
     )(x)
-
+    x = keras.activations.sigmoid(x)
     model = keras.models.Model(inputs=img_input, outputs=x, name=name)
     return model
 
@@ -273,8 +276,8 @@ class CycleGan(keras.Model):
         generator_F,
         discriminator_X,
         discriminator_Y,
-        lambda_cycle=10.0,
-        lambda_identity=0.5,
+        lambda_cycle=9.0,
+        lambda_identity=0.4,
     ):
         super().__init__()
         self.gen_G = generator_G

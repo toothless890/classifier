@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import variables
 import os
-
+keras.mixed_precision.set_global_policy('mixed_float16')
 from keras import backend as K
 K.clear_session()
 
@@ -16,7 +16,7 @@ gpus = tf.config.list_physical_devices('GPU')
 for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
 
-# keras.mixed_precision.set_global_policy('mixed_float16')
+
 
 CLASSNAMES = variables.CLASSNAMES
 
@@ -43,8 +43,10 @@ RESHAPE = variables.RESHAPE
 #     np.savez_compressed(DIRECTORY+'newData.npz', x_data=x_data, y_data=y_data)
 
 data = np.load(DIRECTORY+'/dataset.npz')
-x_test = data['x_test']
-y_test = data['y_test']
+# x_test = data['x_test']
+# y_test = data['y_test']
+x_test = data['x_train']
+y_test = data['y_train']
 
 x_test = x_test.reshape(RESHAPE)
 x_test = x_test.astype(np.float32)
@@ -66,15 +68,16 @@ model = modelBuilder.CycleGan(
     generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y
     )
 scheduler = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=0.0003,decay_steps=2000,decay_rate=0.9)
-
+initial_lr = 0.0001
 model.compile(
-    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
-    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
-    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
-    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=scheduler, beta_1=0.6),
+    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
+    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
+    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.55),
+    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.55),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
+
 try:
     model.load_weights(checkpoint_filepath)
     print("model loaded")
@@ -97,14 +100,15 @@ rows = 6
 cols = 6
 num_images = rows*cols
 # result = model(x_test[0:(num_images//2)])
-
-figure = plt.figure(figsize=(10, 10))
+image = None
+result = None
+figure = plt.figure(figsize=(100, 100))
 for i in range(num_images):
     plt.subplot(rows, cols, i + 1)
     plt.xticks([])
     plt.yticks([])
     plt.grid(False)
-
+    
     if i % 3 == 0:
         img = np.squeeze(x_test[i // 3])
     elif i % 3 == 1:
@@ -113,11 +117,34 @@ for i in range(num_images):
         img = np.squeeze(result)
         
     else:
-        image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
-        result = model.gen_G(image)
+        # image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
+        # result = model.gen_G(image)
         img = np.squeeze(model.gen_F(result))
         
     img = (img * 127.5 + 127.5).astype(np.uint8)
     plt.imshow(img)
+plt.savefig("latestModel.png")  
 
-    plt.savefig("latestModel.png")
+for i in range(num_images):
+    plt.subplot(rows, cols, i + 1)
+    plt.xticks([])
+    plt.yticks([])
+    plt.grid(False)
+    
+    if i % 3 == 0:
+        img = np.squeeze(y_test[i // 3])
+    elif i % 3 == 1:
+        image = y_test[((i - 1) // 3):((i - 1) // 3)+1]
+        result = model.gen_F(image)
+        img = np.squeeze(result)
+        
+    else:
+        # image = x_test[((i - 1) // 3):((i - 1) // 3)+1]
+        img = np.squeeze(model.gen_G(result))
+        
+    img = (img * 127.5 + 127.5).astype(np.uint8)
+    plt.imshow(img)
+
+plt.savefig("latestModelReversed.png")  
+
+print("done'd")
