@@ -215,7 +215,7 @@ disc_X = modelBuilder.get_discriminator(name="discriminator_X")
 disc_Y = modelBuilder.get_discriminator(name="discriminator_Y")
 
 model = modelBuilder.CycleGan(
-    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y)
+    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=10.0, lambda_identity = 0.5)
 
 
 

@@ -96,8 +96,8 @@ gc.collect()
     
 # Plot and save images
 
-rows = 6
-cols = 6
+rows = 3*9
+cols = 3*9
 num_images = rows*cols
 # result = model(x_test[0:(num_images//2)])
 image = None

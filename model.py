@@ -276,8 +276,8 @@ class CycleGan(keras.Model):
         generator_F,
         discriminator_X,
         discriminator_Y,
-        lambda_cycle=9.0,
-        lambda_identity=0.4,
+        lambda_cycle=10.0,
+        lambda_identity=0.5,
     ):
         super().__init__()
         self.gen_G = generator_G
@@ -408,8 +408,8 @@ class CycleGan(keras.Model):
         }
 
 # Loss function for evaluating adversarial loss
-# adv_loss_fn = keras.losses.MeanSquaredError()
-adv_loss_fn = keras.losses.BinaryCrossentropy()
+adv_loss_fn = keras.losses.MeanSquaredError()
+# adv_loss_fn = keras.losses.BinaryCrossentropy()
 
 def relativistic_loss(real_output, fake_output):
     return tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
@@ -418,20 +418,17 @@ def relativistic_loss(real_output, fake_output):
         labels=tf.zeros_like(fake_output), logits=fake_output - tf.reduce_mean(real_output)
     ))
     
+# adv_loss_fn = keras.losses.MeanSquaredError()
+
 # Define the loss function for the generators
-# @keras.saving.register_keras_serializable()
 def generator_loss_fn(fake):
-    return -tf.reduce_mean(fake)
-    # fake_loss = adv_loss_fn(tf.ones_like(fake), fake)
-    # return fake_loss
+    fake_loss = adv_loss_fn(tf.ones_like(fake), fake)
+    return fake_loss
 
 
 # Define the loss function for the discriminators
-# @keras.saving.register_keras_serializable()
 def discriminator_loss_fn(real, fake):
-    
-    # return relativistic_loss(real, fake)
-    
-    real_loss = tf.reduce_mean(tf.nn.relu(1.0 - real))
-    fake_loss = tf.reduce_mean(tf.nn.relu(1.0 + fake))
+    real_loss = adv_loss_fn(tf.ones_like(real), real)
+    fake_loss = adv_loss_fn(tf.zeros_like(fake), fake)
     return (real_loss + fake_loss) * 0.5
+
