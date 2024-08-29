@@ -215,7 +215,7 @@ disc_X = modelBuilder.get_discriminator(name="discriminator_X")
 disc_Y = modelBuilder.get_discriminator(name="discriminator_Y")
 
 model = modelBuilder.CycleGan(
-    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=7.0, lambda_identity = 0.3)
+    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=5.0, lambda_identity = 0.2)
 
 
 
@@ -227,10 +227,10 @@ except Exception as e:
     print("model failed to load, training from scratch")
     
 model.compile(
-    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
-    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
-    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
-    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
+    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.3),
+    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.3),
+    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.4),
+    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.4),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )

@@ -100,9 +100,9 @@ rows = 3*9
 cols = 3*9
 num_images = rows*cols
 # result = model(x_test[0:(num_images//2)])
-image = None
+image = None 
 result = None
-figure = plt.figure(figsize=(100, 100))
+figure = plt.figure(figsize=(120, 120))
 for i in range(num_images):
     plt.subplot(rows, cols, i + 1)
     plt.xticks([])
