@@ -1,3 +1,5 @@
+trying to implemment a keras article about recreating cycleGAN, using my rough classifier code as a starting point
+
 Python requirements:
 
     keras
