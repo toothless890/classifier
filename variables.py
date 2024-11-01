@@ -23,7 +23,7 @@ CLASSNAMES = sorted(os.listdir(DIRECTORY+"training"))
 # smaller values will run faster, but may be more limited in accuracy. 
 # this also affects the size of the images in the test strip in tensorboard
 global IMAGE_SIZE
-IMAGE_SIZE = (256, 256)
+IMAGE_SIZE = (128, 128)
 
 # determines the 'shape' of the array formed for each image
 # 3 means 3 color values (RGB)
@@ -55,7 +55,7 @@ global checkpoint_filepath #where to put the weights of the model. Rename file t
 checkpoint_filepath = DIRECTORY + 'model.weights.h5'
 
 
-#Helper functions
+#Helper functio128
 #TODO: move this back to main.py as there's no need to use it and have to import tensorflow in prepData and other preprocessing steps
 
 

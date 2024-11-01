@@ -188,7 +188,7 @@ class CustomLossScheduler(tf.keras.callbacks.Callback):
 # Usage in your training script
 
 # Parameters
-initial_lr = 0.0002
+initial_lr = 0.0004
 final_lr = 0.00001
 regularization_weight = 0.01  # Adjust based on the desired smoothing effect
 total_epochs = 600
@@ -206,16 +206,19 @@ custom_loss_scheduler = CustomLossScheduler(
 dataset, x_test, y_test = load_and_preprocess_data()
 
 import model as modelBuilder
-
-gen_G = modelBuilder.get_resnet_generator(name="generator_G")
-gen_F = modelBuilder.get_resnet_generator(name="generator_F")
+downsample_blocks = 2
+residual_blocks = 9
+upsample_blocks = 2
+disc_downsamples = 2
+gen_G = modelBuilder.get_resnet_generator(name="generator_G", num_downsampling_blocks= downsample_blocks, num_upsample_blocks = upsample_blocks, num_residual_blocks = residual_blocks)
+gen_F = modelBuilder.get_resnet_generator(name="generator_F", num_downsampling_blocks= downsample_blocks, num_upsample_blocks = upsample_blocks, num_residual_blocks = residual_blocks)
 
 # Get the discriminators
-disc_X = modelBuilder.get_discriminator(name="discriminator_X")
-disc_Y = modelBuilder.get_discriminator(name="discriminator_Y")
+disc_X = modelBuilder.get_discriminator(name="discriminator_X", num_downsampling= disc_downsamples)
+disc_Y = modelBuilder.get_discriminator(name="discriminator_Y", num_downsampling= disc_downsamples)
 
 model = modelBuilder.CycleGan(
-    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=5.0, lambda_identity = 0.2)
+    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=10.0, lambda_identity = 0.5)
 
 
 
@@ -227,10 +230,10 @@ except Exception as e:
     print("model failed to load, training from scratch")
     
 model.compile(
-    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.3),
-    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.3),
-    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.4),
-    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.4),
+    gen_G_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
+    gen_F_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
+    disc_X_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
+    disc_Y_optimizer=keras.optimizers.AdamW(learning_rate=initial_lr, beta_1=0.5),
     gen_loss_fn=modelBuilder.generator_loss_fn,
     disc_loss_fn=modelBuilder.discriminator_loss_fn,
 )
