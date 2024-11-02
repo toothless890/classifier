@@ -261,7 +261,7 @@ def get_discriminator(
                 kernel_size=(4, 4),
                 strides=(1, 1),
             )
-        x = layers.Dropout(0.3)
+        x = layers.Dropout(0.3)(x)
     x = layers.Conv2D(
         1, (4, 4), strides=(1, 1), padding="same", kernel_initializer=kernel_initializer
     )(x)
