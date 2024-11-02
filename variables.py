@@ -15,9 +15,6 @@ global CLASSNAMES
 # automatically processes all names in the training folder
 CLASSNAMES = sorted(os.listdir(DIRECTORY+"training"))
 
-#overrride
-# CLASSNAMES = ["0", "1","2","3","4","5","6","7","8","9"]
-
 
 # THIS DETERMINES THE SIZE OF THE IMAGE THAT THE NEURAL NETWORK TRAINS ON
 # smaller values will run faster, but may be more limited in accuracy. 

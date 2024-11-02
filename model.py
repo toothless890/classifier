@@ -109,7 +109,7 @@ def residual_block(
     # x = layers.Dropout(0.2)(x)
     x = activation(x)
     
-    x = add_noise(stddev=0.01)(x)
+    x = add_noise(stddev=0.02)(x)
     
     x = ReflectionPadding2D()(x)
     x = layers.Conv2D(
@@ -122,7 +122,7 @@ def residual_block(
     )(x)
     # x = tfa.layers.InstanceNormalization(gamma_initializer=gamma_initializer)(x)
     x = InstanceNormalization(gamma_initializer=gamma_initializer)(x)
-    x = add_noise(stddev=0.01)(x)
+    x = add_noise(stddev=0.02)(x)
     x = layers.add([input_tensor, x])
     return x
 
@@ -261,7 +261,7 @@ def get_discriminator(
                 kernel_size=(4, 4),
                 strides=(1, 1),
             )
-        x = add_noise(stddev=0.01)(x)
+        x = layers.Dropout(0.3)
     x = layers.Conv2D(
         1, (4, 4), strides=(1, 1), padding="same", kernel_initializer=kernel_initializer
     )(x)

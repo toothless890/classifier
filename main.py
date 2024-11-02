@@ -145,8 +145,8 @@ def load_and_preprocess_data():
     return dataset, x_test, y_test
 
 def warmup_gpu():
-    x = tf.random.normal([1, 256, 256, 3])
-    y = tf.random.normal([1, 256, 256, 3])
+    x = tf.random.normal([1, 128, 128, 3])
+    y = tf.random.normal([1, 128, 128, 3])
     model = tf.keras.Sequential([
         tf.keras.layers.Conv2D(32, (3, 3), activation='relu', padding='same'),
         tf.keras.layers.MaxPooling2D((2, 2))
@@ -189,9 +189,9 @@ class CustomLossScheduler(tf.keras.callbacks.Callback):
 
 # Parameters
 initial_lr = 0.0004
-final_lr = 0.00001
+final_lr = 0.000001
 regularization_weight = 0.01  # Adjust based on the desired smoothing effect
-total_epochs = 600
+total_epochs = 700
 decay_start_epoch = 100  # Start decaying after 100 epochs
 
 # Initialize the custom scheduler
@@ -218,7 +218,7 @@ disc_X = modelBuilder.get_discriminator(name="discriminator_X", num_downsampling
 disc_Y = modelBuilder.get_discriminator(name="discriminator_Y", num_downsampling= disc_downsamples)
 
 model = modelBuilder.CycleGan(
-    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=10.0, lambda_identity = 0.5)
+    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=8.0, lambda_identity = 0.4)
 
 
 
