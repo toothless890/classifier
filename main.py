@@ -103,7 +103,7 @@ def augment_image(image, label):
 def load_and_preprocess_data():
     # Load the .npz file
     try:
-        data = np.load(DIRECTORY+'/dataset.npz')
+        data = np.load(DIRECTORY+'/facadesDataset.npz')
     except:
         print("You must run prepData.py in order to train the model")
         exit
@@ -188,7 +188,7 @@ class CustomLossScheduler(tf.keras.callbacks.Callback):
 # Usage in your training script
 
 # Parameters
-initial_lr = 0.0004
+initial_lr = 0.0002
 final_lr = 0.000001
 regularization_weight = 0.01  # Adjust based on the desired smoothing effect
 total_epochs = 700
@@ -205,7 +205,7 @@ custom_loss_scheduler = CustomLossScheduler(
 
 dataset, x_test, y_test = load_and_preprocess_data()
 
-import model as modelBuilder
+import cyclegan as modelBuilder
 downsample_blocks = 2
 residual_blocks = 9
 upsample_blocks = 2
@@ -218,7 +218,7 @@ disc_X = modelBuilder.get_discriminator(name="discriminator_X", num_downsampling
 disc_Y = modelBuilder.get_discriminator(name="discriminator_Y", num_downsampling= disc_downsamples)
 
 model = modelBuilder.CycleGan(
-    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=8.0, lambda_identity = 0.4)
+    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=10.0, lambda_identity = 0.5)
 
 
 
