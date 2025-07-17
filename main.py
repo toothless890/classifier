@@ -31,7 +31,7 @@ for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
 
 
-keras.mixed_precision.set_global_policy('mixed_float16')
+# keras.mixed_precision.set_global_policy('mixed_float16')
 
 tf.experimental.numpy.experimental_enable_numpy_behavior()
 
@@ -109,11 +109,11 @@ def load_and_preprocess_data():
         exit
     
     
-    x_train = data['x_train']
-    y_train = data['y_train']
+    x_train = data['y_train']
+    y_train = data['x_train']
     
-    x_test = data['x_test']
-    y_test = data['y_test']
+    x_test = data['y_test']
+    y_test = data['x_test']
     
     x_train = x_train.reshape(RESHAPE)
     x_train = x_train.astype(np.float32)
