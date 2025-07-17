@@ -272,7 +272,7 @@ def show_test_dataset(a, b):
     #TODO: make this use batches, of a changable size (i tried isolating one image and it didnt work, investigate more!) 
     image = None
     result = None
-    figure = plt.figure(figsize=(10, 10))
+    figure = plt.figure(figsize=(20, 20))
     for i in range(num_images):
         plt.subplot(rows, cols, i + 1)
         plt.xticks([])
