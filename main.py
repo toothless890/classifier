@@ -134,9 +134,9 @@ def load_and_preprocess_data():
     dataset_x = tf.data.Dataset.from_tensor_slices(x_train)
     dataset_y = tf.data.Dataset.from_tensor_slices(y_train)
     
-    # dataset_x = dataset_x.shuffle(256, reshuffle_each_iteration=True)
+    dataset_x = dataset_x.shuffle(256, reshuffle_each_iteration=True)
     
-    # dataset_y = dataset_y.shuffle(256, reshuffle_each_iteration=True)
+    dataset_y = dataset_y.shuffle(256, reshuffle_each_iteration=True)
     # dataset = dataset.shuffle(buffer_size=256)
     dataset = tf.data.Dataset.zip((dataset_x, dataset_y))
     dataset = dataset.map(augment_image, num_parallel_calls=tf.data.AUTOTUNE)
