@@ -103,7 +103,7 @@ def augment_image(image, label):
 def load_and_preprocess_data():
     # Load the .npz file
     try:
-        data = np.load(DIRECTORY+'/facadesDataset.npz')
+        data = np.load(DIRECTORY+'/dataset.npz')
     except:
         print("You must run prepData.py in order to train the model")
         exit
@@ -221,7 +221,7 @@ disc_Y = modelBuilder.get_discriminator(name="discriminator_Y", num_downsampling
 model = modelBuilder.CycleGan(
     generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=10.0, lambda_identity = 0.5)
 
-
+model.build(INPUTSHAPE)
 
 try:
     model.load_weights(checkpoint_filepath)
