@@ -146,8 +146,8 @@ def load_and_preprocess_data():
     return dataset, x_test, y_test
 
 def warmup_gpu():
-    x = tf.random.normal([1, 128, 128, 3])
-    y = tf.random.normal([1, 128, 128, 3])
+    x = tf.random.normal([1, 256, 256, 3])
+    y = tf.random.normal([1, 256, 256, 3])
     model = tf.keras.Sequential([
         tf.keras.layers.Conv2D(32, (3, 3), activation='relu', padding='same'),
         tf.keras.layers.MaxPooling2D((2, 2))
