@@ -219,7 +219,7 @@ disc_X = modelBuilder.get_discriminator(name="discriminator_X", num_downsampling
 disc_Y = modelBuilder.get_discriminator(name="discriminator_Y", num_downsampling= disc_downsamples)
 
 model = modelBuilder.CycleGan(
-    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=10.0, lambda_identity = 0.6)
+    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=13.0, lambda_identity = 0.6)
 
 model.build(INPUTSHAPE)
 
