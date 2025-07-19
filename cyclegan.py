@@ -627,7 +627,8 @@ class CycleGan(keras.Model):
 
 
 # Loss function for evaluating adversarial loss
-adv_loss_fn = keras.losses.MeanSquaredError()
+# adv_loss_fn = keras.losses.MeanSquaredError() 
+adv_loss_fn = keras.losses.BinaryCrossentropy()# binary crossentropy should help with sharper images
 
 # Define the loss function for the generators
 
