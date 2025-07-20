@@ -80,19 +80,19 @@ def augment_image(image, label):
     # image = tf.add(image, noise)
     # label = tf.add(label, noise)
     
-    image = tf.image.random_hue(image, 0.05)
-    label = tf.image.random_hue(label, 0.05)
+    # image = tf.image.random_hue(image, 0.05)
+    # label = tf.image.random_hue(label, 0.05)
     
-    image = tf.image.random_saturation(image, 0.9, 1.1)
-    label = tf.image.random_saturation(label, 0.9, 1.1)
+    # image = tf.image.random_saturation(image, 0.9, 1.1)
+    # label = tf.image.random_saturation(label, 0.9, 1.1)
     
-    # Apply random brightness adjustment
-    image = tf.image.random_brightness(image, max_delta=0.1)
-    label = tf.image.random_brightness(label, max_delta=0.1)
+    # # Apply random brightness adjustment
+    # image = tf.image.random_brightness(image, max_delta=0.1)
+    # label = tf.image.random_brightness(label, max_delta=0.1)
     
-    # Apply random contrast adjustment
-    image = tf.image.random_contrast(image, lower=0.9, upper=1.1)
-    label = tf.image.random_contrast(label, lower=0.9, upper=1.1)
+    # # Apply random contrast adjustment
+    # image = tf.image.random_contrast(image, lower=0.9, upper=1.1)
+    # label = tf.image.random_contrast(label, lower=0.9, upper=1.1)
     
     # image = tf.image.random_jpeg_quality(image, 80, 100)
     # label = tf.image.random_jpeg_quality(label, 80, 100)
@@ -219,7 +219,7 @@ disc_X = modelBuilder.get_discriminator(name="discriminator_X", num_downsampling
 disc_Y = modelBuilder.get_discriminator(name="discriminator_Y", num_downsampling= disc_downsamples)
 
 model = modelBuilder.CycleGan(
-    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=13.0, lambda_identity = 0.6)
+    generator_G=gen_G, generator_F=gen_F, discriminator_X=disc_X, discriminator_Y=disc_Y, lambda_cycle=12.0, lambda_identity = 0.55)
 
 model.build(INPUTSHAPE)
 
